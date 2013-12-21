@@ -9,14 +9,14 @@ set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS " -pthread -L.")
 
 # collect all sources (copy from 'ls -1 *.cpp')
 SET(DuplicodeSources
-FilterIdentity.hpp
-FilterDelete.hpp
-Main.cpp
-CompareAlgo.h
-CompareAlgo.cpp
-AbstractTetComparator.h 
-AbstractTetFilter.h 
-ComparatorIdentical.hpp
+src/FilterIdentity.hpp
+src/FilterDelete.hpp
+src/Main.cpp
+src/CompareAlgo.h
+src/CompareAlgo.cpp
+src/AbstractTetComparator.h 
+src/AbstractTetFilter.h 
+src/ComparatorIdentical.hpp
 )
 
 
