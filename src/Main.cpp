@@ -3,6 +3,7 @@
 #include "FilterDelete.hpp"
 #include "AbstractTetFilter.h"
 #include "ComparatorIdentical.hpp" 
+#include "ComparatorLongestMatch.h" 
 #include <string>
 #include <memory>
 #include <iostream>
@@ -12,7 +13,7 @@ using namespace std;
 int main(){
 
     CompareAlgo comp;
-    string c1 = "este er rewr w";
+    string c1 = "este er rewrd w";
     string c2 = "asta ar lkewrd";
 
     std::unique_ptr<AbstractTetFilter> filter{new FilterIdentity()};
@@ -21,7 +22,7 @@ int main(){
     cout << "Comparision without comp.: "<< comp.compare(c1,c2) <<endl;
     
 
-    std::unique_ptr<AbstractTetComparator> comparator{new ComparatorIdentical()};
+    std::unique_ptr<AbstractTetComparator> comparator{new ComparatorLongestMatch()};
     comp.setComparator(comparator);
 
     cout << "Comparision (identical): "<< comp.compare(c1,c2) <<endl;
