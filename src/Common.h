@@ -22,10 +22,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractTestFilter.h"
-class FilterIdentity : public AbstractTestFilter{
+#include <vector>
+#include <string>
+#include "boost/filesystem.hpp"
 
-     public:
-        std::string operator()(const std::string& s) const {return s;}
-        const std::string name = "FPilter:DoNothing";
-};
+std::vector<boost::filesystem::path> get_all_files(
+                const boost::filesystem::path& root, 
+                const std::string& ext);
+                
+std::vector<std::string> &split(const std::string &, char , 
+                                std::vector<std::string> &);
+std::vector<std::string> split(const std::string&, char);               

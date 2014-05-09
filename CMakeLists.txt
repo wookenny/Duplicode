@@ -1,24 +1,28 @@
 cmake_minimum_required(VERSION 2.6)
 
 #project name
-project(Duplicode)
+project(duplicode)
 
 #specific compiler settings
 set(CMAKE_CXX_FLAGS "-O3 -m64 -g -fstack-protector -funwind-tables -fasynchronous-unwind-tables -fopenmp -std=c++11 -I.")
-set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS " -fopenmp -pthread -L.")
+set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS " -fopenmp -pthread -lboost_regex -lboost_filesystem -lboost_system -lboost_program_options -L.")
 
 # collect all sources (copy from 'ls -1 *.cpp')
 SET(DuplicodeSources
 src/FilterIdentity.hpp
 src/FilterDelete.hpp
-src/FilterDeleteComents.h
-src/FilterDeleteComents.cpp
+src/FilterDeleteComments.h
+src/FilterDeleteComments.cpp
 src/Main.cpp
+src/Common.h
+src/Common.cpp
 src/CompareAlgo.h
 src/CompareAlgo.cpp
-src/AbstractTetComparator.h 
-src/AbstractTetFilter.h 
+src/AbstractTestComparator.h 
+src/AbstractTestFilter.h 
 src/ComparatorIdentical.hpp
+src/ComparatorLevenshteinDistance.h
+src/ComparatorLevenshteinDistance.cpp
 src/ComparatorLongestMatch.h
 src/ComparatorLongestMatch.cpp
 )
@@ -33,4 +37,4 @@ MESSAGE( STATUS "---------------------------------------------------------------
 MESSAGE( STATUS )
 
 #define executable
-ADD_EXECUTABLE(Duplicode ${DuplicodeSources} )
+ADD_EXECUTABLE(duplicode ${DuplicodeSources} )

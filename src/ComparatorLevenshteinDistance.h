@@ -22,10 +22,17 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractTestFilter.h"
-class FilterIdentity : public AbstractTestFilter{
+#include "AbstractTestComparator.h"
+#include <string>
 
-     public:
-        std::string operator()(const std::string& s) const {return s;}
-        const std::string name = "FPilter:DoNothing";
-};
+class ComparatorLevenshteinDistance : public AbstractTestComparator{
+ 
+public:
+        double operator()(const std::string& c1, const std::string& c2) const{
+            return static_cast<double>(levenshteinDistance(c1,c2));            
+        }
+
+private:
+       uint levenshteinDistance(const std::string&,
+                                  const std::string&) const;
+}; 

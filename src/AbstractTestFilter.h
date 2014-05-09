@@ -22,10 +22,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractTestFilter.h"
-class FilterIdentity : public AbstractTestFilter{
+#include <string>
 
-     public:
-        std::string operator()(const std::string& s) const {return s;}
-        const std::string name = "FPilter:DoNothing";
+class AbstractTestFilter{
+    
+    public:
+        virtual std::string operator()(const std::string&) const = 0; 
+        const std::string name = "Filter:Abstract"; 
+        //TODO: I want to have a virtual behaviot for this field!!
 };
+

@@ -22,10 +22,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractTestFilter.h"
-class FilterIdentity : public AbstractTestFilter{
+#include <string>
 
-     public:
-        std::string operator()(const std::string& s) const {return s;}
-        const std::string name = "FPilter:DoNothing";
-};
+class AbstractTestComparator{
+    public:
+        virtual double operator()(const std::string&, const std::string&) const = 0; 
+}; 

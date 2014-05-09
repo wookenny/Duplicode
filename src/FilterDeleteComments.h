@@ -23,9 +23,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "AbstractTestFilter.h"
-class FilterIdentity : public AbstractTestFilter{
+class FilterDeleteComments : public AbstractTestFilter{
+
+    //enum Language{}
 
      public:
-        std::string operator()(const std::string& s) const {return s;}
-        const std::string name = "FPilter:DoNothing";
+        std::string operator()(const std::string& s) const;
+        const std::string name = "Filter:DeleteComments"; 
 };

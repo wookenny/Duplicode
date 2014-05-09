@@ -20,12 +20,18 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
+#include "FilterDeleteComments.h"
+#include <boost/regex.hpp>
 
-#pragma once
-#include "AbstractTestFilter.h"
-class FilterIdentity : public AbstractTestFilter{
+using namespace std;
 
-     public:
-        std::string operator()(const std::string& s) const {return s;}
-        const std::string name = "FPilter:DoNothing";
-};
+string FilterDeleteComments::operator()(const std::string& s) const{
+
+    boost::regex one_line_comment("//[^\\n]*");
+    boost::regex multi_line_comment("/\\*[^\\*/]*\\*/");
+
+    std::string result = boost::regex_replace(s    , one_line_comment, "\\n");
+    result             = boost::regex_replace(result, multi_line_comment, "");
+
+    return result;
+}
