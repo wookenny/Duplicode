@@ -24,14 +24,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "Common.h"
 #include <sstream>
 #include <algorithm>
-
+#include "magic.h"
 namespace fs = boost::filesystem;
 using namespace std;
 
 // return the filenames of all files that have the specified extension
 // in the specified directory and all subdirectories
-std::vector<boost::filesystem::path> get_all_files(const fs::path& root, 
-                                                   const string& ext)
+std::vector<boost::filesystem::path> get_all_files_by_extensions(const fs::path& root, 
+                                        const string& ext,const std::string& ignore)
 {  
     std::vector<boost::filesystem::path> files;
     if (!fs::exists(root)) 
@@ -41,13 +41,40 @@ std::vector<boost::filesystem::path> get_all_files(const fs::path& root,
         fs::recursive_directory_iterator it(root);
         fs::recursive_directory_iterator endit;
         while(it != endit){
-            if (fs::is_regular_file(*it) and it->path().extension() == ext)
-                files.push_back(it->path());
+            if (fs::is_regular_file(*it) and it->path().extension() == ext){
+                if(not file_in_list(it->path().filename().string(),ignore))  
+                    files.push_back(it->path());
+            }
             ++it;
         }
     }
     return files;
 }
+
+// return the filenames of all files that seem to be sourcecode
+// in the specified directory and all subdirectories
+std::vector<boost::filesystem::path> get_all_source_files(const fs::path& root,
+                                                      const std::string& ignore)
+{  
+    std::vector<boost::filesystem::path> files;
+    if (!fs::exists(root)) 
+        return files;
+    
+    if (fs::is_directory(root)){
+        fs::recursive_directory_iterator it(root);
+        fs::recursive_directory_iterator endit;
+        while(it != endit){
+            if (fs::is_regular_file(*it) and is_source(it->path().string())){
+                if(not file_in_list(it->path().filename().string(),ignore)) 
+                    files.push_back(it->path());
+            }
+            ++it;
+        }
+    }
+    return files;
+}
+
+
 
 std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss(s);
@@ -64,3 +91,22 @@ std::vector<std::string> split(const std::string &s, char delim) {
     split(s, delim, elems);
     return elems;
 }
+
+
+bool is_source(const std::string &file){
+     magic_t myt = magic_open(MAGIC_CONTINUE|MAGIC_ERROR/*|MAGIC_DEBUG*/);
+     magic_load(myt,NULL);
+     std::string type = magic_file(myt,file.c_str());
+     magic_close(myt);
+     return (type.find("source")!=std::string::npos);
+}     
+
+
+bool file_in_list(const std::string &name, const std::string &list){
+    auto file_list  = split(list, ',');  
+    for(const std::string& str: file_list)
+        if (name == str)
+            return true;
+    return false;        
+}
+

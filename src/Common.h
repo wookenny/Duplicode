@@ -26,10 +26,21 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <string>
 #include "boost/filesystem.hpp"
 
-std::vector<boost::filesystem::path> get_all_files(
+
+std::vector<boost::filesystem::path> get_all_files_by_extensions(
                 const boost::filesystem::path& root, 
-                const std::string& ext);
+                const std::string& ext, const std::string& ignore);
+
+std::vector<boost::filesystem::path> get_all_source_files(
+                const boost::filesystem::path& root, const std::string& ignore);
                 
 std::vector<std::string> &split(const std::string &, char , 
                                 std::vector<std::string> &);
-std::vector<std::string> split(const std::string&, char);               
+std::vector<std::string> split(const std::string&, char);    
+
+#include <cstdio>
+
+
+
+bool is_source(const std::string &file);
+bool file_in_list(const std::string &name, const std::string &list); 

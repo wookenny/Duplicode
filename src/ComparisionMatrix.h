@@ -25,6 +25,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <vector>
 #include <memory>
 #include <tuple>
+#include <unordered_set>
+#include <unordered_map>
 
 //todo Groupnumer is a template argument
 class ComparisonMatrix{
@@ -33,6 +35,9 @@ class ComparisonMatrix{
            std::string filename;  
            std::string content;
            std::string filtered_content; 
+           
+           CodeFile(const std::string f, const std::string &c):
+                  filename(f), content(c),filtered_content(""){}
     };
 
 
@@ -41,12 +46,19 @@ class ComparisonMatrix{
     public:
         
         void addCodes(std::vector<std::string> &codes){
-            codeList_.reset();
-            for(auto s: codes)
-                codeList_.push_back(s);
+       
+            //TODO find group numbers!
+            //TODO: use codefiles instead of strings!
+            codeFiles_.clear();
+            for(auto s: codes){
+                int group = get_group(s);
+                codeFiles_[group] = s;//append
+            }    
             calculated_ = false;
         }
-        void setCompareAlgorithm( std::unique_ptr<compareAlgo> comp){
+        
+        /**
+        void setCompareAlgorithm( std::unique_ptr<CompareAlgo> comp){
             comparator_ = std::move(comp);
             calculated_ = false;
         }        
@@ -67,10 +79,13 @@ class ComparisonMatrix{
             for(CodeFile file: codeFiles_)
                     file.filtered_content = comparator_.filter(file.content);
         }
-    
+        */
     private:
-        std::unordered_map<int,CodeFile> codeFiles_;
-        std::unordered_set<int, std::unordered_map<int, double>> compResults_;
-        std::unique_ptr<compareAlgo> comparator_;
-        bool calculated = false;
+        std::unordered_map<int,std::string> codeFiles_;
+        //std::unordered_map<int,CodeFile> codeFiles_;
+        //std::unordered_set<int, std::unordered_map<int, double>> compResults_;
+        std::unique_ptr<CompareAlgo> comparator_;
+        bool calculated_;
+        
+        int get_group(std::string &s){ return 3;}
 };
