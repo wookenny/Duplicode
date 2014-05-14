@@ -19,6 +19,8 @@ src/Common.h
 src/Common.cpp
 src/CompareAlgo.h
 src/CompareAlgo.cpp
+src/ComparisonMatrix.h
+src/ComparisonMatrix.cpp
 src/AbstractTestComparator.h 
 src/AbstractTestFilter.h 
 src/ComparatorIdentical.hpp

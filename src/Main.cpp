@@ -26,7 +26,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "FilterDelete.hpp"
 #include "FilterDeleteComments.h"
 #include "AbstractTestFilter.h"
-#include "ComparisionMatrix.h"
+#include "ComparisonMatrix.h"
 #include "ComparatorIdentical.hpp"
 #include "ComparatorLongestMatch.h"
 #include "Common.h"
@@ -108,11 +108,10 @@ int main(int ac, const char* av[]){
     
     //call it, baby
     auto files = collect_files(root, suffixes, ignore);
-    for(auto f: files)
-        cout<< f<<endl;
         
     ComparisonMatrix comp_matrix;
-    //comp_matrix.addCodes(files);    
+    comp_matrix.addCodes(files);    
+    comp_matrix.print_files();
     /*
     CompareAlgo comp;
     const string c1 = "este er rewrd w";

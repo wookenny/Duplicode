@@ -20,13 +20,17 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
-
+#pragma once
 #include "CompareAlgo.h"
+#include <iostream>
 #include <vector>
 #include <memory>
 #include <tuple>
 #include <unordered_set>
 #include <unordered_map>
+#include "Common.h"
+
+std::string get_group(const std::string &s);
 
 //todo Groupnumer is a template argument
 class ComparisonMatrix{
@@ -45,18 +49,10 @@ class ComparisonMatrix{
    
     public:
         
-        void addCodes(std::vector<std::string> &codes){
-       
-            //TODO find group numbers!
-            //TODO: use codefiles instead of strings!
-            codeFiles_.clear();
-            for(auto s: codes){
-                int group = get_group(s);
-                codeFiles_[group] = s;//append
-            }    
-            calculated_ = false;
-        }
+        void addCodes(std::vector<std::string> &codes);
         
+        
+        void print_files() const;
         /**
         void setCompareAlgorithm( std::unique_ptr<CompareAlgo> comp){
             comparator_ = std::move(comp);
@@ -81,11 +77,9 @@ class ComparisonMatrix{
         }
         */
     private:
-        std::unordered_map<int,std::string> codeFiles_;
-        //std::unordered_map<int,CodeFile> codeFiles_;
-        //std::unordered_set<int, std::unordered_map<int, double>> compResults_;
+        std::unordered_map<std::string,std::vector<std::string>> codeFiles_;
         std::unique_ptr<CompareAlgo> comparator_;
         bool calculated_;
         
-        int get_group(std::string &s){ return 3;}
+       
 };
