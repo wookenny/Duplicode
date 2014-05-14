@@ -26,9 +26,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <vector>
 #include <memory>
 #include <tuple>
-#include <unordered_set>
 #include <unordered_map>
+#include <fstream>
+#include <string>
+#include <memory>
 #include "Common.h"
+#include "ComparatorIdentical.hpp"
+#include "ComparatorLongestMatch.h"
+#include "ComparatorLevenshteinDistance.h"
+#include "FilterIdentity.hpp"
 
 std::string get_group(const std::string &s);
 
@@ -40,46 +46,66 @@ class ComparisonMatrix{
            std::string content;
            std::string filtered_content; 
            
-           CodeFile(const std::string f, const std::string &c):
-                  filename(f), content(c),filtered_content(""){}
+           CodeFile(const std::string f,const std::string root){
+                std::ifstream ifs(root+f);
+                std::string c( (std::istreambuf_iterator<char>(ifs) ),
+                                      (std::istreambuf_iterator<char>() ) );
+                assert(c!="");
+                filename = f;
+                content  = c;
+                filtered_content = "";                       
+ 
+           }
     };
 
 
-    enum MultipleFileComp{SameName, SingleBestMatch, BestMatching}; 
+    enum MultipleFileComp{SameNameMax, SameNameMultiply, SingleBestMatch}; 
    
     public:
+        ComparisonMatrix() = delete;
+        ComparisonMatrix(std::string root){
+            std::unique_ptr<CompareAlgo> comp{new CompareAlgo()};
+            
+            std::unique_ptr<AbstractTestComparator> comparator
+                                           {new ComparatorLongestMatch()};
+            //std::unique_ptr<AbstractTestComparator> comparator
+            //                    {new ComparatorLevenshteinDistance()};
+            comp->setComparator(comparator);
+            std::unique_ptr<AbstractTestFilter> filter{new FilterIdentity()};
+            comp->addFilter(filter);
+            comparator_ = std::move(comp);
+            calculated_ = false;
+            root_ = root;
+        }
+        
+        
         
         void addCodes(std::vector<std::string> &codes);
         
         
         void print_files() const;
-        /**
+        
         void setCompareAlgorithm( std::unique_ptr<CompareAlgo> comp){
             comparator_ = std::move(comp);
             calculated_ = false;
         }        
 
-        //TODO: every string filtered 'n' times!! Once is enough!
-        //NOW doable
-        void calculateComparisionMatrix(){
-            if(calculated_) return;
-            #pragma omp parallel for
-            for(uint i=0; i<codeList_;++i)
-                for(uint j=i+1; j<codeList_; ++j)
-                    comparisonResult_[i][j] = comparator_(codeList_[i],codeList[j]); 
+        void calculateComparisionMatrix();
 
-            calculated_=true;
-        }
+        void filterCodes();
         
-        void filterCodes(){
-            for(CodeFile file: codeFiles_)
-                    file.filtered_content = comparator_.filter(file.content);
-        }
-        */
+        std::vector<std::tuple<std::string,std::string,double>>
+            get_sorted_matches(); 
     private:
-        std::unordered_map<std::string,std::vector<std::string>> codeFiles_;
+        std::unordered_map<std::string,std::vector<CodeFile>> codeFiles_;
         std::unique_ptr<CompareAlgo> comparator_;
         bool calculated_;
-        
+        std::string root_;
+         std::unordered_map<std::string,std::unordered_map<std::string,double>> comparisonResult_;
        
+        MultipleFileComp comp_mode_ = SingleBestMatch;
+        
+        
+        double compare_groups(const std::vector<CodeFile>& g1,
+                              const std::vector<CodeFile>& g2) const;
 };

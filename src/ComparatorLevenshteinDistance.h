@@ -24,12 +24,18 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "AbstractTestComparator.h"
 #include <string>
+#include <cmath>
 
 class ComparatorLevenshteinDistance : public AbstractTestComparator{
  
 public:
         double operator()(const std::string& c1, const std::string& c2) const{
-            return static_cast<double>(levenshteinDistance(c1,c2));            
+            uint dist = levenshteinDistance(c1,c2);
+            
+            double sim = 1/pow(dist==0?1:dist,.5);
+            double n = (c1.size()+c2.size())/2.; 
+            sim = 1/(dist/n);
+            return sim;            
         }
 
 private:

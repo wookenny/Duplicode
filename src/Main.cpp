@@ -44,11 +44,12 @@ void help(const po::options_description &desc);
     
 vector<string> collect_files(const string& root, const string& suffixes, 
                              const std::string& ignore);
+vector<string> collect_files_by_names(const string& root,  const string& filenames);
 
 int main(int ac, const char* av[]){
 
     int opt;
-    string root,suffixes, filter, comparators, ignore;
+    string root,suffixes, filter, comparators, ignore, filenames;
 
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -59,8 +60,11 @@ int main(int ac, const char* av[]){
     ("suffix,e", po::value<string>(&suffixes)->default_value(""),
     "comma separated suffixes of the source code files to look at,"
     " e.g., .java,.h,.cpp ")
-    ("i,ignore", po::value<string>(&ignore)->default_value(""),
+    ("ignore,i", po::value<string>(&ignore)->default_value(""),
     "comma separated list of files to be ignored. ")
+    ("exclusive,x", po::value<string>(&filenames),
+    "comma separated list of files to considered exclusively."
+    " Everything else will be ignored. E.g., 'Decompress.java'")
     ("filter,f", po::value<string>(&filter)->default_value(""),
     "comma separated filter to normalize the source code")
     ("comparator,c", po::value<string>(&comparators)->default_value("identity"),
@@ -107,11 +111,26 @@ int main(int ac, const char* av[]){
     
     
     //call it, baby
-    auto files = collect_files(root, suffixes, ignore);
-        
-    ComparisonMatrix comp_matrix;
+    std::vector<std::string> files;
+    if(vm.count("exclusive")){
+        files  = collect_files_by_names(root, filenames);
+    }else{ 
+        files = collect_files(root, suffixes, ignore);
+    }    
+    ComparisonMatrix comp_matrix(root);
     comp_matrix.addCodes(files);    
     comp_matrix.print_files();
+    //comp_matrix.calculateComparisionMatrix(); 
+    auto results = comp_matrix.get_sorted_matches();
+    for(int i = 0; i<10 and i<results.size();++i){
+        std::string group1, group2;
+        double value;
+        std::tie(group1,group2,value) = results[i];
+        std::cout<< group1<<" vs. "<<group2<<":\t"<<value<<"\n";  
+    }
+    
+    std::cout<<std::endl;
+    
     /*
     CompareAlgo comp;
     const string c1 = "este er rewrd w";
@@ -176,4 +195,15 @@ vector<string> collect_files(const string& root, const string& suffixes, const s
     }   
     
     return matching_files; 
+}
+
+vector<string> collect_files_by_names(const string& root,  const string& filenames){
+    vector<string> matching_files;
+    auto files = get_all_files_by_name(root,filenames);
+    for(auto f: files){
+        string name = f.string();
+        name = name.substr(root.size()); 
+        matching_files.push_back(name);  
+    }
+    return matching_files;   
 }

@@ -34,6 +34,9 @@ std::vector<boost::filesystem::path> get_all_files_by_extensions(
 std::vector<boost::filesystem::path> get_all_source_files(
                 const boost::filesystem::path& root, const std::string& ignore);
                 
+std::vector<boost::filesystem::path> get_all_files_by_name(
+                const boost::filesystem::path& root, const std::string& filenames);                
+                
 std::vector<std::string> &split(const std::string &, char , 
                                 std::vector<std::string> &);
 std::vector<std::string> split(const std::string&, char);    

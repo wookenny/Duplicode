@@ -51,6 +51,27 @@ std::vector<boost::filesystem::path> get_all_files_by_extensions(const fs::path&
     return files;
 }
 
+std::vector<boost::filesystem::path> get_all_files_by_name(
+                const boost::filesystem::path& root, const std::string& filenames)
+{
+    std::vector<boost::filesystem::path> files;
+    if (!fs::exists(root)) 
+        return files;
+    
+    if (fs::is_directory(root)){
+        fs::recursive_directory_iterator it(root);
+        fs::recursive_directory_iterator endit;
+        while(it != endit){
+            if (fs::is_regular_file(*it)){
+                if(file_in_list(it->path().filename().string(),filenames))  
+                    files.push_back(it->path());
+            }
+            ++it;
+        }
+    }
+    return files;                
+}        
+
 // return the filenames of all files that seem to be sourcecode
 // in the specified directory and all subdirectories
 std::vector<boost::filesystem::path> get_all_source_files(const fs::path& root,
