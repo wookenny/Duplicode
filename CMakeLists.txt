@@ -4,8 +4,8 @@ cmake_minimum_required(VERSION 2.6)
 project(duplicode)
 
 #specific compiler settings
-set(CMAKE_CXX_FLAGS "-O3 -m64 -g -fstack-protector -funwind-tables -fasynchronous-unwind-tables -fopenmp -std=c++11 -I.")
-set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS " -fopenmp -pthread -lboost_regex -lboost_filesystem -lboost_system -lboost_program_options -l:libmagic.so.1 -L. -L/usr/lib64")
+set(CMAKE_CXX_FLAGS "-O3 -m64 -g -fstack-protector -funwind-tables -fasynchronous-unwind-tables -std=c++11 -I.")
+set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS " -lboost_regex -lboost_filesystem -lboost_system -lboost_program_options -l:libmagic.so.1 -L. -L/usr/lib64")
 
 # collect all sources (copy from 'ls -1 *.cpp')
 SET(DuplicodeSources

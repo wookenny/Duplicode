@@ -129,15 +129,16 @@ int main(int ac, const char* av[]){
         std::cout<< group1<<" vs. "<<group2<<":\t"<<value<<"\n";  
     }
     //print statistics
-    double max = std::get<2>(results.front());
-    double min = std::get<2>(results.back());
-    double median = std::get<2>(results[results.size()/2]);
-    double avg = 0;
-    for(auto & elem : results)
-        avg += std::get<2>(elem);
-    avg /= results.size();     
-    std::cout<<"min: "<<min<<"\tmedian: "<<median<<"\tmax: "<<max<<"\tavg: "<<avg<<std::endl;
-    
+    if(results.size()>0){
+        double max = std::get<2>(results.front());
+        double min = std::get<2>(results.back());
+        double median = std::get<2>(results[results.size()/2]);
+        double avg = 0;
+        for(auto & elem : results)
+            avg += std::get<2>(elem);
+        avg /= results.size();     
+        std::cout<<"min: "<<min<<"\tmedian: "<<median<<"\tmax: "<<max<<"\tavg: "<<avg<<std::endl;
+    }
     std::cout<<std::endl;
     
     /*
