@@ -100,11 +100,15 @@ class ComparisonMatrix{
         std::unique_ptr<CompareAlgo> comparator_;
         bool calculated_;
         std::string root_;
-         std::unordered_map<std::string,std::unordered_map<std::string,double>> comparisonResult_;
+        std::unordered_map<std::string,std::unordered_map<std::string,double>> comparisonResult_;
+        std::vector<std::tuple<std::string,std::string>> pairs_;
        
         MultipleFileComp comp_mode_ = SameNameMax;
         
         
         double compare_groups(const std::vector<CodeFile>& g1,
                               const std::vector<CodeFile>& g2) const;
+                              
+        void compute_via_thread_(int tid);
+   
 };

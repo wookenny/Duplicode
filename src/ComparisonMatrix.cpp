@@ -23,7 +23,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "ComparisonMatrix.h"
 #include <algorithm>
-#include <omp.h>
+#include <thread>
+
+static const int NUM_THREADS = std::thread::hardware_concurrency()*2;
 
 std::string get_group(const std::string &s){ 
     std::vector<std::string> vec = split(s, '/');
@@ -49,41 +51,51 @@ void ComparisonMatrix::addCodes(std::vector<std::string> &codes){
     calculated_ = false;
 }
 
+void ComparisonMatrix::compute_via_thread_(int tid) {
+    for(size_t i=tid; i<pairs_.size();i+=NUM_THREADS){
+        std::string group1 = std::get<0>(pairs_[i]);
+        std::string group2 = std::get<1>(pairs_[i]);
+        //std::cout<< "comparing: "<<group1<<" and "<<group2<<std::endl;
+        double sim = compare_groups(codeFiles_[group1], codeFiles_[group2]);
+        comparisonResult_[group1][group2] = sim;   
+        if(tid==0){
+            std::cout<<"\r "<<100*i/pairs_.size()<<"%  ";
+            std::cout.flush();
+        }
+          
+    }
+}
+
 void ComparisonMatrix::calculateComparisionMatrix(){
     //how to get group names
     if(calculated_) return;
     
     std::vector<std::string> keys;
-    std::vector<std::tuple<std::string,std::string>> pairs;
+    pairs_.clear();
     for(auto kv : codeFiles_) 
         keys.push_back(kv.first);
     std::sort(std::begin(keys),std::end(keys));    
     for(size_t i=0; i<keys.size();++i)
         for(size_t j=i+1; j<keys.size();++j){
-            pairs.push_back(std::make_tuple(keys[i],keys[j]));
+            pairs_.push_back(std::make_tuple(keys[i],keys[j]));
             comparisonResult_[keys[i]][keys[j]] = 0;    
         }
         
 
     
-    std::cout<<"comparisons in total: "<<pairs.size()<<std::endl;
-
-    int counter = 0;
-    //48 threads is much faster than 6: 10.3s vs 18.3s
-    //no omp at all vs 1 thread:        40s vs 39s        
-    #pragma omp parallel for schedule(dynamic,8) num_threads(48)
-    for(size_t i=0; i<pairs.size();++i){
-        counter+=1;
-        std::string group1 = std::get<0>(pairs[i]);
-        std::string group2 = std::get<1>(pairs[i]);
-        //std::cout<< "comparing: "<<group1<<" and "<<group2<<std::endl;
-        double sim = compare_groups(codeFiles_[group1], codeFiles_[group2]);
-        comparisonResult_[group1][group2] = sim;   
-        if( omp_get_thread_num() == 0){
-            std::cout<<"\r  "<< 100*counter/pairs.size()<<"%     ";
-            std::cout.flush();
-        }
+    std::cout<<"comparisons in total: "<<pairs_.size()<<std::endl;
+    std::cout<<"using "<<NUM_THREADS<<" threads for processing" <<std::endl;
+    //c++11 thread version!:
+    std::thread t[NUM_THREADS];
+    for (int i = 0; i < NUM_THREADS; ++i) {
+        t[i] = std::thread(&ComparisonMatrix::compute_via_thread_, this, i);
     }
+
+    //Join the threads with the main thread
+    for (int i = 0; i < NUM_THREADS; ++i) {
+        t[i].join();
+    }
+    
     std::cout<<"\r  Done  "<<std::endl;
     //std::cout<<"\r";
     //std::cout<<"100 %        "<<std::endl;
