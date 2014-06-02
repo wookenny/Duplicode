@@ -25,17 +25,23 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "AbstractTestComparator.h"
 #include <string>
 #include <cmath>
+#include <iostream>
 
 class ComparatorLevenshteinDistance : public AbstractTestComparator{
  
 public:
         double operator()(const std::string& c1, const std::string& c2) const{
-            uint dist = levenshteinDistance(c1,c2);
-            
-            double sim = 1/pow(dist==0?1:dist,.5);
-            double n = (c1.size()+c2.size())/2.; 
-            sim = 1/(dist/n);
-            return sim;            
+
+            uint dist = 0;
+            if(c1.size() >= c2.size())
+                dist = levenshteinDistance(c1,c2);
+            else 
+                dist = levenshteinDistance(c2,c1);
+            double n = std::min(c1.size(),c2.size());
+            double N = std::max(c1.size(),c2.size());       
+            double sim = (dist-(N-n))/std::max(1.0*dist,1.);
+
+            return std::max(sim,0.);            
         }
 
 private:

@@ -9,6 +9,7 @@ set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS " -fopenmp -pthread -lboost_regex -lboos
 
 # collect all sources (copy from 'ls -1 *.cpp')
 SET(DuplicodeSources
+src/difflibTG.hpp
 src/FilterIdentity.hpp
 src/FilterDelete.hpp
 src/FilterDeleteComments.h
@@ -23,6 +24,7 @@ src/ComparisonMatrix.h
 src/ComparisonMatrix.cpp
 src/AbstractTestComparator.h 
 src/AbstractTestFilter.h 
+src/ComparatorDiffLib.hpp
 src/ComparatorIdentical.hpp
 src/ComparatorLevenshteinDistance.h
 src/ComparatorLevenshteinDistance.cpp

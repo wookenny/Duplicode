@@ -122,12 +122,21 @@ int main(int ac, const char* av[]){
     comp_matrix.print_files();
     //comp_matrix.calculateComparisionMatrix(); 
     auto results = comp_matrix.get_sorted_matches();
-    for(int i = 0; i<10 and i<results.size();++i){
+    for(int i = 0; i<15 and i<results.size();++i){
         std::string group1, group2;
         double value;
         std::tie(group1,group2,value) = results[i];
         std::cout<< group1<<" vs. "<<group2<<":\t"<<value<<"\n";  
     }
+    //print statistics
+    double max = std::get<2>(results.front());
+    double min = std::get<2>(results.back());
+    double median = std::get<2>(results[results.size()/2]);
+    double avg = 0;
+    for(auto & elem : results)
+        avg += std::get<2>(elem);
+    avg /= results.size();     
+    std::cout<<"min: "<<min<<"\tmedian: "<<median<<"\tmax: "<<max<<"\tavg: "<<avg<<std::endl;
     
     std::cout<<std::endl;
     

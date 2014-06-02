@@ -22,6 +22,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #include "ComparatorLongestMatch.h"
+#include <iostream>
 double ComparatorLongestMatch::operator()(const std::string& c1,
                                           const std::string& c2) const
 {
@@ -31,7 +32,6 @@ double ComparatorLongestMatch::operator()(const std::string& c1,
             double match = sizeOfMatch(c1,i,c2,j);
             max_match = std::max(match,max_match);       
         }
-            
 
     return max_match;
 }

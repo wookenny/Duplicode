@@ -23,6 +23,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "ComparisonMatrix.h"
 #include <algorithm>
+#include <omp.h>
+
 std::string get_group(const std::string &s){ 
     std::vector<std::string> vec = split(s, '/');
     return (s[0]=='/')?vec[1]:vec[0]; 
@@ -50,22 +52,41 @@ void ComparisonMatrix::addCodes(std::vector<std::string> &codes){
 void ComparisonMatrix::calculateComparisionMatrix(){
     //how to get group names
     if(calculated_) return;
-    for (auto &g1 : codeFiles_ )
-        for (auto &g2 : codeFiles_){
-            if(g1.first>=g2.first) continue;
-            comparisonResult_[g1.first][g2.first] = -1.;
-        }    
-    //#pragma omp parallel for
-    for (auto &g1: codeFiles_ ){
-        for (auto &g2: codeFiles_){
-            std::string i = g1.first;
-            std::string j = g2.first;
-            if (g1.first>=g2.first) continue;
-            std::cout<< "comparing: "<<g1.first<<" and "<<g2.first<<std::endl;
-            double sim = compare_groups(g1.second,g2.second);
-            comparisonResult_[i][j] = sim;   
+    
+    std::vector<std::string> keys;
+    std::vector<std::tuple<std::string,std::string>> pairs;
+    for(auto kv : codeFiles_) 
+        keys.push_back(kv.first);
+    std::sort(std::begin(keys),std::end(keys));    
+    for(size_t i=0; i<keys.size();++i)
+        for(size_t j=i+1; j<keys.size();++j){
+            pairs.push_back(std::make_tuple(keys[i],keys[j]));
+            comparisonResult_[keys[i]][keys[j]] = 0;    
+        }
+        
+
+    
+    std::cout<<"comparisons in total: "<<pairs.size()<<std::endl;
+
+    int counter = 0;
+    //48 threads is much faster than 6: 10.3s vs 18.3s
+    //no omp at all vs 1 thread:        40s vs 39s        
+    #pragma omp parallel for schedule(dynamic,8) num_threads(48)
+    for(size_t i=0; i<pairs.size();++i){
+        counter+=1;
+        std::string group1 = std::get<0>(pairs[i]);
+        std::string group2 = std::get<1>(pairs[i]);
+        //std::cout<< "comparing: "<<group1<<" and "<<group2<<std::endl;
+        double sim = compare_groups(codeFiles_[group1], codeFiles_[group2]);
+        comparisonResult_[group1][group2] = sim;   
+        if( omp_get_thread_num() == 0){
+            std::cout<<"\r  "<< 100*counter/pairs.size()<<"%     ";
+            std::cout.flush();
         }
     }
+    std::cout<<"\r  Done  "<<std::endl;
+    //std::cout<<"\r";
+    //std::cout<<"100 %        "<<std::endl;
     calculated_ = true;
 }
 
@@ -90,13 +111,31 @@ double ComparisonMatrix::compare_groups(const std::vector<CodeFile>& g1,
 {
     double match = 0;
     switch(comp_mode_){
-        case SameNameMax:
-            std::cout<< "Not implemented: same name max" <<std::endl;
+        case SingleBestMatch:
+            //First implementation
+            for(const CodeFile& f1: g1)
+                for(const CodeFile& f2: g2){
+                     double m = comparator_->compare(f1.filtered_content,
+                                                     f2.filtered_content);
+                     match = std::max(match,m);
+                     //std::cout<<f1.filename<<" vs "<<f2.filename<<"   "<<m <<std::endl;    
+                }
             break;
         case SameNameMultiply:
-            std::cout<< "Not implemented: same name mutiply"<<std::endl;
+            //First implementation
+            match = 1.0;
+            for(const CodeFile& f1: g1)
+                for(const CodeFile& f2: g2){
+                    if(split(f1.filename,'/').back()!=
+                       split(f2.filename,'/').back())
+                        continue;     
+                     double m = comparator_->compare(f1.filtered_content,
+                                                     f2.filtered_content);
+                     match *= m;
+                     //std::cout<<f1.filename<<" vs "<<f2.filename<<"   "<<m <<std::endl;    
+                }
             break;
-        case SingleBestMatch:
+        case SameNameMax:
             //First implementation
             for(const CodeFile& f1: g1)
                 for(const CodeFile& f2: g2){
@@ -106,7 +145,7 @@ double ComparisonMatrix::compare_groups(const std::vector<CodeFile>& g1,
                      double m = comparator_->compare(f1.filtered_content,
                                                      f2.filtered_content);
                      match = std::max(match,m);
-                     std::cout<<f1.filename<<" vs "<<f2.filename<<"   "<<m <<std::endl;    
+                     //std::cout<<f1.filename<<" vs "<<f2.filename<<"   "<<m <<std::endl;    
                 }
             break;
         default: std::cout<<"WARNING: NO VALID MODE FOR COMPARISON"<<std::endl;

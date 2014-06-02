@@ -34,6 +34,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "ComparatorIdentical.hpp"
 #include "ComparatorLongestMatch.h"
 #include "ComparatorLevenshteinDistance.h"
+#include "ComparatorDiffLib.hpp"
 #include "FilterIdentity.hpp"
 
 std::string get_group(const std::string &s);
@@ -67,9 +68,7 @@ class ComparisonMatrix{
             std::unique_ptr<CompareAlgo> comp{new CompareAlgo()};
             
             std::unique_ptr<AbstractTestComparator> comparator
-                                           {new ComparatorLongestMatch()};
-            //std::unique_ptr<AbstractTestComparator> comparator
-            //                    {new ComparatorLevenshteinDistance()};
+                                          {new ComparatorDiffLib()};
             comp->setComparator(comparator);
             std::unique_ptr<AbstractTestFilter> filter{new FilterIdentity()};
             comp->addFilter(filter);
@@ -103,7 +102,7 @@ class ComparisonMatrix{
         std::string root_;
          std::unordered_map<std::string,std::unordered_map<std::string,double>> comparisonResult_;
        
-        MultipleFileComp comp_mode_ = SingleBestMatch;
+        MultipleFileComp comp_mode_ = SameNameMax;
         
         
         double compare_groups(const std::vector<CodeFile>& g1,
