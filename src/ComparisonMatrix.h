@@ -39,6 +39,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 std::string get_group(const std::string &s);
 
+struct CodeMatch{
+    std::string group1;
+    std::string group2;
+    double similarity;
+    std::string file1;
+    std::string file2;
+};
+
 //todo Groupnumer is a template argument
 class ComparisonMatrix{
 
@@ -58,7 +66,6 @@ class ComparisonMatrix{
  
            }
     };
-
 
     enum MultipleFileComp{SameNameMax, SameNameMultiply, SingleBestMatch}; 
    
@@ -92,22 +99,27 @@ class ComparisonMatrix{
         void calculateComparisionMatrix();
 
         void filterCodes();
+        std::vector<CodeMatch> get_sorted_matches(); 
         
-        std::vector<std::tuple<std::string,std::string,double>>
-            get_sorted_matches(); 
     private:
         std::unordered_map<std::string,std::vector<CodeFile>> codeFiles_;
         std::unique_ptr<CompareAlgo> comparator_;
         bool calculated_;
         std::string root_;
-        std::unordered_map<std::string,std::unordered_map<std::string,double>> comparisonResult_;
+        
+        struct Similarity{
+            double val;
+            std::string hint1;
+            std::string hint2;
+        };
+        std::unordered_map<std::string,std::unordered_map<std::string,Similarity>> comparisonResult_;
         std::vector<std::tuple<std::string,std::string>> pairs_;
        
-        MultipleFileComp comp_mode_ = SameNameMax;
-        
-        
+        MultipleFileComp comp_mode_ = SameNameMax;        
         double compare_groups(const std::vector<CodeFile>& g1,
-                              const std::vector<CodeFile>& g2) const;
+                              const std::vector<CodeFile>& g2,
+                              std::string *hint1 = nullptr,
+                              std::string *hint2 = nullptr ) const;
                               
         void compute_via_thread_(int tid);
    

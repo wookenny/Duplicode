@@ -33,6 +33,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <string>
 #include <memory>
 #include <iostream>
+#include <chrono>  
+#include <thread>
 #include "boost/program_options.hpp"
 
 #define VERSION "0.0.1"
@@ -123,24 +125,43 @@ int main(int ac, const char* av[]){
     //comp_matrix.calculateComparisionMatrix(); 
     auto results = comp_matrix.get_sorted_matches();
     for(int i = 0; i<15 and i<results.size();++i){
-        std::string group1, group2;
-        double value;
-        std::tie(group1,group2,value) = results[i];
-        std::cout<< group1<<" vs. "<<group2<<":\t"<<value<<"\n";  
+        CodeMatch &m = results[i]; 
+        std::cout<< m.group1<<" vs. "<<m.group2<<":\t"<<m.similarity<<"\n";  
     }
     //print statistics
     if(results.size()>0){
-        double max = std::get<2>(results.front());
-        double min = std::get<2>(results.back());
-        double median = std::get<2>(results[results.size()/2]);
+        double max = results.front().similarity;
+        double min = results.back().similarity;
+        double median = results[results.size()/2].similarity;
         double avg = 0;
         for(auto & elem : results)
-            avg += std::get<2>(elem);
+            avg += elem.similarity;
         avg /= results.size();     
-        std::cout<<"min: "<<min<<"\tmedian: "<<median<<"\tmax: "<<max<<"\tavg: "<<avg<<std::endl;
+        std::cout<<"min: "<<min<<"\tmedian: "<<median<<"\tmax: "
+                 <<max<<"\tavg: "<<avg<<std::endl;
     }
     std::cout<<std::endl;
     
+    if(results.size()>0){
+         std::cout<<"using visual difftool to view findings"<<std::endl;
+         std::string difftool = find_difftool();
+         for(int i = 0;i<results.size();++i){
+            CodeMatch &m = results[i];
+            std::cout<<"Comparing: '"<<m.group1<<"' '"<<m.group2<<"'"<<std::endl;
+            std::cout<<"Launch '"<<difftool<<"' [Y/n]"<<std::endl;
+            std::string answer; 
+            std::cin >> answer;
+            if(answer=="n" or answer=="N"){
+                std::cout<<"Quit."<<std::endl;
+                break;
+            }
+            std::string syscall = difftool;
+            syscall += " "+root+m.file1;
+            syscall += " "+root+m.file2;
+            int r = system(syscall.c_str());    
+            std::this_thread::sleep_for (std::chrono::seconds(1));
+        }
+    }
     /*
     CompareAlgo comp;
     const string c1 = "este er rewrd w";

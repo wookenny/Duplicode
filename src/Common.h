@@ -24,6 +24,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #pragma once
 #include <vector>
 #include <string>
+#include <cstdio>
 #include "boost/filesystem.hpp"
 
 
@@ -41,9 +42,8 @@ std::vector<std::string> &split(const std::string &, char ,
                                 std::vector<std::string> &);
 std::vector<std::string> split(const std::string&, char);    
 
-#include <cstdio>
-
 
 
 bool is_source(const std::string &file);
 bool file_in_list(const std::string &name, const std::string &list); 
+std::string find_difftool();

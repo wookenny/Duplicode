@@ -131,3 +131,18 @@ bool file_in_list(const std::string &name, const std::string &list){
     return false;        
 }
 
+std::string find_difftool(){
+    std::vector<std::string> difftools = { "meld", "opendiff", 
+            "kdiff3", "tkdiff", "xxdiff", "kompare", "gvimdiff", "diffuse",
+            "diffmerge", "ecmerge", "p4merge", "araxis", "bc3", "codecompare",
+            "emerge", "vimdiff"};
+            
+    for(auto &s: difftools){
+        int i = system (("which "+s+" >> /dev/null").c_str());
+        if(i==0)
+            return s;
+    }
+    return "";
+}
+
+

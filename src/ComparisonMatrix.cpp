@@ -56,8 +56,14 @@ void ComparisonMatrix::compute_via_thread_(int tid) {
         std::string group1 = std::get<0>(pairs_[i]);
         std::string group2 = std::get<1>(pairs_[i]);
         //std::cout<< "comparing: "<<group1<<" and "<<group2<<std::endl;
-        double sim = compare_groups(codeFiles_[group1], codeFiles_[group2]);
-        comparisonResult_[group1][group2] = sim;   
+        std::string hint1, hint2;
+        double sim = compare_groups(codeFiles_[group1], codeFiles_[group2],
+                                    &hint1, &hint2);
+        Similarity simil;
+        simil.val = sim;
+        simil.hint1 = hint1;
+        simil.hint2 = hint2;                               
+        comparisonResult_[group1][group2] = simil;   
         if(tid==0){
             std::cout<<"\r "<<100*i/pairs_.size()<<"%  ";
             std::cout.flush();
@@ -78,7 +84,8 @@ void ComparisonMatrix::calculateComparisionMatrix(){
     for(size_t i=0; i<keys.size();++i)
         for(size_t j=i+1; j<keys.size();++j){
             pairs_.push_back(std::make_tuple(keys[i],keys[j]));
-            comparisonResult_[keys[i]][keys[j]] = 0;    
+            Similarity simil;
+            comparisonResult_[keys[i]][keys[j]] = simil;    
         }
         
 
@@ -119,7 +126,8 @@ void ComparisonMatrix::print_files() const{
 }
 
 double ComparisonMatrix::compare_groups(const std::vector<CodeFile>& g1,
-                                    const std::vector<CodeFile>& g2) const
+                                    const std::vector<CodeFile>& g2, 
+                                    std::string* h1, std::string* h2) const
 {
     double match = 0;
     switch(comp_mode_){
@@ -129,8 +137,9 @@ double ComparisonMatrix::compare_groups(const std::vector<CodeFile>& g1,
                 for(const CodeFile& f2: g2){
                      double m = comparator_->compare(f1.filtered_content,
                                                      f2.filtered_content);
-                     match = std::max(match,m);
-                     //std::cout<<f1.filename<<" vs "<<f2.filename<<"   "<<m <<std::endl;    
+                     if(m > match){
+                           match = m; *h1 = f1.filename; *h2 = f2.filename; 
+                     }  
                 }
             break;
         case SameNameMultiply:
@@ -156,7 +165,9 @@ double ComparisonMatrix::compare_groups(const std::vector<CodeFile>& g1,
                         continue;     
                      double m = comparator_->compare(f1.filtered_content,
                                                      f2.filtered_content);
-                     match = std::max(match,m);
+                     if(m > match){
+                           match = m; *h1 = f1.filename; *h2 = f2.filename; 
+                     }
                      //std::cout<<f1.filename<<" vs "<<f2.filename<<"   "<<m <<std::endl;    
                 }
             break;
@@ -166,23 +177,27 @@ double ComparisonMatrix::compare_groups(const std::vector<CodeFile>& g1,
     return match;                               
 }
 
-std::vector<std::tuple<std::string,std::string,double>> 
-                               ComparisonMatrix::get_sorted_matches()
+std::vector<CodeMatch> ComparisonMatrix::get_sorted_matches()
 {   
     calculateComparisionMatrix();
-    std::vector<std::tuple<std::string,std::string,double>> matches;
+    std::vector<CodeMatch> matches;
 
     for(const auto &i: comparisonResult_){
         for(const auto &j: comparisonResult_[i.first]){
-            double sim = comparisonResult_[i.first][j.first];     
-            matches.push_back(std::make_tuple(i.first,j.first,sim));
+            CodeMatch match;
+            auto &comp = comparisonResult_[i.first][j.first];
+            match.similarity = comp.val;
+            match.group1 = i.first;
+            match.group2 = j.first;
+            match.file1  = comp.hint1;
+            match.file2  = comp.hint2;
+            matches.push_back(match);
         }
     }
     
-    typedef std::tuple<std::string,std::string,double> Elem;
     //sort them
-    auto order = [](const Elem& a, const Elem& b) { 
-        return std::get<2>(a) > std::get<2>(b); 
+    auto order = [](const CodeMatch& a, const CodeMatch& b) { 
+        return a.similarity > b.similarity; 
     };
     std::sort(begin(matches),end(matches),order);
     return matches;
