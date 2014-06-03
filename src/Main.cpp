@@ -121,7 +121,7 @@ int main(int ac, const char* av[]){
     }    
     ComparisonMatrix comp_matrix(root);
     comp_matrix.addCodes(files);    
-    comp_matrix.print_files();
+    //comp_matrix.print_files();
     //comp_matrix.calculateComparisionMatrix(); 
     auto results = comp_matrix.get_sorted_matches();
     for(int i = 0; i<15 and i<results.size();++i){
@@ -147,7 +147,8 @@ int main(int ac, const char* av[]){
          std::string difftool = find_difftool();
          for(int i = 0;i<results.size();++i){
             CodeMatch &m = results[i];
-            std::cout<<"Comparing: '"<<m.group1<<"' '"<<m.group2<<"'"<<std::endl;
+            std::cout<<"Comparing: '"<<m.group1<<"' '"<<m.group2<<"'  (";
+            std::cout<<m.similarity<<")"<<std::endl;
             std::cout<<"Launch '"<<difftool<<"' [Y/n]"<<std::endl;
             std::string answer; 
             std::cin >> answer;
@@ -157,7 +158,7 @@ int main(int ac, const char* av[]){
             }
             std::string syscall = difftool;
             syscall += " "+root+m.file1;
-            syscall += " "+root+m.file2;
+            syscall += " "+root+m.file2 + " 2>&1 >/dev/null | grep 'something'";
             int r = system(syscall.c_str());    
             std::this_thread::sleep_for (std::chrono::seconds(1));
         }
