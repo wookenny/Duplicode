@@ -96,6 +96,14 @@ class ComparisonMatrix{
             calculated_ = false;
         }        
 
+        void addFilter(std::unique_ptr<AbstractTestFilter> &f){
+            comparator_->addFilter(f);  
+        }
+    
+        void setComparator(std::unique_ptr<AbstractTestComparator> &c){
+            comparator_->setComparator(c);  
+        }
+
         void calculateComparisionMatrix();
 
         void filterCodes();

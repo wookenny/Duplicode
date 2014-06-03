@@ -47,7 +47,6 @@ void ComparisonMatrix::addCodes(std::vector<std::string> &codes){
         }              
     }
     comparisonResult_.clear() ;
-    filterCodes();
     calculated_ = false;
 }
 
@@ -75,6 +74,8 @@ void ComparisonMatrix::compute_via_thread_(int tid) {
 void ComparisonMatrix::calculateComparisionMatrix(){
     //how to get group names
     if(calculated_) return;
+    
+    filterCodes();
     
     std::vector<std::string> keys;
     pairs_.clear();

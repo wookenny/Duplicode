@@ -27,5 +27,5 @@ class FilterIdentity : public AbstractTestFilter{
 
      public:
         std::string operator()(const std::string& s) const {return s;}
-        const std::string name = "FPilter:DoNothing";
+        const std::string name = "Filter:DoNothing";
 };

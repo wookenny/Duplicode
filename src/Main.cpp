@@ -22,6 +22,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #include "CompareAlgo.h"
+#include "FilterFactory.h"
 #include "FilterIdentity.hpp"
 #include "FilterDelete.hpp"
 #include "FilterDeleteComments.h"
@@ -50,8 +51,8 @@ vector<string> collect_files_by_names(const string& root,  const string& filenam
 
 int main(int ac, const char* av[]){
 
-    int opt;
     string root,suffixes, filter, comparators, ignore, filenames;
+    bool show;
 
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -69,10 +70,11 @@ int main(int ac, const char* av[]){
     " Everything else will be ignored. E.g., 'Decompress.java'")
     ("filter,f", po::value<string>(&filter)->default_value(""),
     "comma separated filter to normalize the source code")
-    ("comparator,c", po::value<string>(&comparators)->default_value("identity"),
-    "filter used to compare the filtered source code")
+    ("comparator,c", po::value<string>(&comparators)->default_value("difflib"),
+    "comparator used to compare the filtered source code")
     ("list,l", "ignore all other argumtents and give a list of available "
     "filters and comparators.")
+    ("show,s", "use a visual difftool to show the best machtes.")
     ;
 
     po::variables_map vm;
@@ -95,7 +97,7 @@ int main(int ac, const char* av[]){
         cout << desc << "\n";
         return 0;
     }catch(...){
-        cout << "Usage:"<< "\n";
+        cout << "Usage:"<<std::boolalpha<< "\n";
         cout << desc << "\n";
         return 0;
     }
@@ -107,7 +109,17 @@ int main(int ac, const char* av[]){
     }
 
     if (vm.count("list")) {
-        cout << "TODO: implement this feature!"<< "\n";
+        cout << "filters: \n";
+        auto filters = FilterFactory::filterdescription_list();
+        for(const auto &f: filters){
+            std::string name,desc;
+            std::tie(name,desc) = f;
+            std::cout<<"\t'"<<name<<"':   "<<desc <<"\n";
+        
+        }
+        
+        cout << "\n\ncomparators: \n";
+        
         return 0;
     }   
     
@@ -121,6 +133,19 @@ int main(int ac, const char* av[]){
     }    
     ComparisonMatrix comp_matrix(root);
     comp_matrix.addCodes(files);    
+    if(filter!=""){
+        auto filters = split(filter,',');
+        for(auto f: filters){
+            std::cout<<"try to generate filter object with name f"<<std::endl;
+            std::unique_ptr<AbstractTestFilter> filter = nullptr;
+            FilterFactory::generate_filter(filter,f);
+            if(filter!=nullptr){
+                std::cout<<"added filter: "<<f<<std::endl;
+                comp_matrix.addFilter(filter);
+            }
+        }
+    }
+    
     //comp_matrix.print_files();
     //comp_matrix.calculateComparisionMatrix(); 
     auto results = comp_matrix.get_sorted_matches();
@@ -142,7 +167,7 @@ int main(int ac, const char* av[]){
     }
     std::cout<<std::endl;
     
-    if(results.size()>0){
+    if(results.size()>0 and vm.count("show")){
          std::cout<<"using visual difftool to view findings"<<std::endl;
          std::string difftool = find_difftool();
          for(int i = 0;i<results.size();++i){
