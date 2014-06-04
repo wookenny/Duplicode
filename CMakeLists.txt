@@ -11,9 +11,12 @@ set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS " -lboost_regex -lboost_filesystem -lboo
 SET(DuplicodeSources
 src/difflibTG.hpp
 src/FilterIdentity.hpp
+src/FilterToLower.hpp
 src/FilterDelete.hpp
 src/FilterDeleteComments.h
 src/FilterDeleteComments.cpp
+src/FilterFactory.h
+src/FilterFactory.cpp
 src/magic.h
 src/Main.cpp
 src/Common.h
@@ -30,6 +33,8 @@ src/ComparatorLevenshteinDistance.h
 src/ComparatorLevenshteinDistance.cpp
 src/ComparatorLongestMatch.h
 src/ComparatorLongestMatch.cpp
+src/ComparatorFactory.h
+src/ComparatorFactory.cpp
 )
 
 
