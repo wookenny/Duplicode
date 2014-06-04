@@ -73,12 +73,13 @@ class ComparisonMatrix{
         ComparisonMatrix() = delete;
         ComparisonMatrix(std::string root){
             std::unique_ptr<CompareAlgo> comp{new CompareAlgo()};
-            
+            /*
             std::unique_ptr<AbstractTestComparator> comparator
                                           {new ComparatorDiffLib()};
             comp->setComparator(comparator);
             std::unique_ptr<AbstractTestFilter> filter{new FilterIdentity()};
             comp->addFilter(filter);
+            */
             comparator_ = std::move(comp);
             calculated_ = false;
             root_ = root;

@@ -21,22 +21,16 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
-#include "CompareAlgo.h"
 #include "FilterFactory.h"
-#include "FilterIdentity.hpp"
-#include "FilterDelete.hpp"
-#include "FilterDeleteComments.h"
-#include "AbstractTestFilter.h"
 #include "ComparisonMatrix.h"
-#include "ComparatorIdentical.hpp"
-#include "ComparatorLongestMatch.h"
+#include "ComparatorFactory.h"
 #include "Common.h"
 #include <string>
 #include <memory>
 #include <iostream>
 #include <chrono>  
 #include <thread>
-#include "boost/program_options.hpp"
+#include <boost/program_options.hpp>
 
 #define VERSION "0.0.1"
 
@@ -48,10 +42,11 @@ void help(const po::options_description &desc);
 vector<string> collect_files(const string& root, const string& suffixes, 
                              const std::string& ignore);
 vector<string> collect_files_by_names(const string& root,  const string& filenames);
+void print_filter_comparators();
 
 int main(int ac, const char* av[]){
 
-    string root,suffixes, filter, comparators, ignore, filenames;
+    string root,suffixes, filter, comparator, ignore, filenames;
     bool show;
 
     po::options_description desc("Allowed options");
@@ -70,7 +65,7 @@ int main(int ac, const char* av[]){
     " Everything else will be ignored. E.g., 'Decompress.java'")
     ("filter,f", po::value<string>(&filter)->default_value(""),
     "comma separated filter to normalize the source code")
-    ("comparator,c", po::value<string>(&comparators)->default_value("difflib"),
+    ("comparator,c", po::value<string>(&comparator)->default_value("DiffLib"),
     "comparator used to compare the filtered source code")
     ("list,l", "ignore all other argumtents and give a list of available "
     "filters and comparators.")
@@ -109,18 +104,8 @@ int main(int ac, const char* av[]){
     }
 
     if (vm.count("list")) {
-        cout << "filters: \n";
-        auto filters = FilterFactory::filterdescription_list();
-        for(const auto &f: filters){
-            std::string name,desc;
-            std::tie(name,desc) = f;
-            std::cout<<"\t'"<<name<<"':   "<<desc <<"\n";
-        
-        }
-        
-        cout << "\n\ncomparators: \n";
-        
-        return 0;
+       print_filter_comparators();
+       return 0;
     }   
     
     
@@ -136,7 +121,6 @@ int main(int ac, const char* av[]){
     if(filter!=""){
         auto filters = split(filter,',');
         for(auto f: filters){
-            std::cout<<"try to generate filter object with name f"<<std::endl;
             std::unique_ptr<AbstractTestFilter> filter = nullptr;
             FilterFactory::generate_filter(filter,f);
             if(filter!=nullptr){
@@ -145,6 +129,19 @@ int main(int ac, const char* av[]){
             }
         }
     }
+    
+    //load comparator
+    std::unique_ptr<AbstractTestComparator> comp = nullptr;
+    ComparatorFactory::generate_comparator(comp,comparator);
+    if(comp!=nullptr){
+        std::cout<<"using comparator: "<<comparator<<std::endl;
+        comp_matrix.setComparator(comp);
+    }else{//load difflib
+        ComparatorFactory::generate_comparator(comp,"DiffLib");
+        assert(comp!=nullptr);
+        comp_matrix.setComparator(comp);
+    }   
+
     
     //comp_matrix.print_files();
     //comp_matrix.calculateComparisionMatrix(); 
@@ -188,35 +185,7 @@ int main(int ac, const char* av[]){
             std::this_thread::sleep_for (std::chrono::seconds(1));
         }
     }
-    /*
-    CompareAlgo comp;
-    const string c1 = "este er rewrd w";
-    const string c2 = "asta ar lkewrd";
 
-    cout<<"------------------------------------------------------" <<endl;
-
-    std::unique_ptr<AbstractTestFilter> filter{new FilterIdentity()};
-    comp.addFilter(filter);
-
-    cout << "Comparision without comp.: "<< comp.filterAndCompare(c1,c2) <<endl;
-
-    cout<<"------------------------------------------------------" <<endl;
-
-    std::unique_ptr<AbstractTestComparator> comparator{new ComparatorLongestMatch()};
-    comp.setComparator(comparator);
-
-    cout << "Comparision (longest match): "<< comp.filterAndCompare(c1,c2) <<endl;
-
-
-
-     cout<<"------------------------------------------------------" <<endl;
-
-    filter = move( unique_ptr<AbstractTestFilter>{new FilterDelete()} );
-    comp.addFilter(filter);
-    cout << "Comparision (longest match, filter: deleteCommets): "<< comp.filterAndCompare(c1,c2) <<endl;
-
-
-    */
 }
 
 void help(const po::options_description &desc){
@@ -263,4 +232,24 @@ vector<string> collect_files_by_names(const string& root,  const string& filenam
         matching_files.push_back(name);  
     }
     return matching_files;   
+}
+
+void print_filter_comparators(){
+    cout << "filters: \n";
+    auto filters = FilterFactory::filterdescription_list();
+    for(const auto &f: filters){
+        std::string name,desc;
+        std::tie(name,desc) = f;
+        std::cout<<"\t'"<<name<<"':   "<<desc <<"\n";
+    
+    }
+    
+    cout << "\n\ncomparators: \n";
+    auto comps = ComparatorFactory::comparatordescription_list();
+    for(const auto &c: comps){
+        std::string name,desc;
+        std::tie(name,desc) = c;
+        std::cout<<"\t'"<<name<<"':   "<<desc <<"\n";
+    
+    }
 }
