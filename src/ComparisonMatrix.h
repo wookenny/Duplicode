@@ -109,7 +109,8 @@ class ComparisonMatrix{
 
         void filterCodes();
         std::vector<CodeMatch> get_sorted_matches(); 
-        
+        std::vector<std::vector<double>> get_comp_matrix();
+        std::vector<std::string> get_keys() const;
     private:
         std::unordered_map<std::string,std::vector<CodeFile>> codeFiles_;
         std::unique_ptr<CompareAlgo> comparator_;

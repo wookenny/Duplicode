@@ -1,6 +1,7 @@
 #include "FilterFactory.h"
 
 #include "FilterDeleteComments.h"
+#include "FilterDeleteWhitespace.hpp"
 #include "FilterDelete.hpp"
 #include "FilterIdentity.hpp"
 #include "FilterToLower.hpp"
@@ -15,6 +16,11 @@ void FilterFactory::generate_filter(std::unique_ptr<AbstractTestFilter> &filter,
     }
     if(f=="DeleteAll"){
         std::unique_ptr<AbstractTestFilter> f{new FilterDelete()};
+        filter = std::move(f);
+        return;
+    }
+     if(f=="DeleteWhitespace"){
+        std::unique_ptr<AbstractTestFilter> f{new FilterDeleteWhitespace()};
         filter = std::move(f);
         return;
     }
@@ -34,6 +40,7 @@ void FilterFactory::generate_filter(std::unique_ptr<AbstractTestFilter> &filter,
 std::vector<std::string> FilterFactory::filter_list(){
     return {"DeleteComments",
             "DeleteAll",
+            "DeleteWhitespace",
             "Identity",
             "ToLower"};
 }
@@ -45,6 +52,7 @@ std::vector<std::tuple<std::string,std::string>> FilterFactory::filterdescriptio
     desc.push_back(std::make_tuple("DeleteComments",
                             "deletes comments like '\\\\' and '\\*.. *\\'."));
     desc.push_back(std::make_tuple("DeleteAll","deletes complete code."));
+    desc.push_back(std::make_tuple("DeleteWhitespace","deletes all whitespace."));
     desc.push_back(std::make_tuple("Identity", "does not change the code.")); 
     desc.push_back(std::make_tuple("ToLower", "changes every character to lower case."));   
            

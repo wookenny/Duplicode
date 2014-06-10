@@ -77,11 +77,8 @@ void ComparisonMatrix::calculateComparisionMatrix(){
     
     filterCodes();
     
-    std::vector<std::string> keys;
     pairs_.clear();
-    for(auto kv : codeFiles_) 
-        keys.push_back(kv.first);
-    std::sort(std::begin(keys),std::end(keys));    
+    auto keys = get_keys();
     for(size_t i=0; i<keys.size();++i)
         for(size_t j=i+1; j<keys.size();++j){
             pairs_.push_back(std::make_tuple(keys[i],keys[j]));
@@ -108,6 +105,23 @@ void ComparisonMatrix::calculateComparisionMatrix(){
     //std::cout<<"\r";
     //std::cout<<"100 %        "<<std::endl;
     calculated_ = true;
+}
+
+std::vector<std::vector<double>> ComparisonMatrix::get_comp_matrix(){
+    calculateComparisionMatrix();
+    
+    auto keys = get_keys(); 
+    
+    //hashmp to matrix
+    std::vector<std::vector<double>> result;
+    for(uint i = 0; i < keys.size();++i)
+        result.push_back(std::vector<double>(keys.size(),0));
+    //fill it properly
+    for(uint i = 0; i < keys.size();i++)
+         for(uint j = i+1; j < keys.size();j++){
+            result[j][i]=result[i][j] =  comparisonResult_[keys[i]][keys[j]].val;
+         } 
+    return result;
 }
 
 void ComparisonMatrix::filterCodes(){
@@ -203,3 +217,11 @@ std::vector<CodeMatch> ComparisonMatrix::get_sorted_matches()
     std::sort(begin(matches),end(matches),order);
     return matches;
 } 
+
+std::vector<std::string> ComparisonMatrix::get_keys() const{
+    std::vector<std::string> keys;
+    for(auto kv : codeFiles_) 
+        keys.push_back(kv.first);
+    std::sort(std::begin(keys),std::end(keys)); 
+    return keys;
+}

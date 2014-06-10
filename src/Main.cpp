@@ -25,6 +25,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "ComparisonMatrix.h"
 #include "ComparatorFactory.h"
 #include "Common.h"
+#include "gnuplot-iostream.h"
 #include <string>
 #include <memory>
 #include <iostream>
@@ -43,6 +44,7 @@ vector<string> collect_files(const string& root, const string& suffixes,
                              const std::string& ignore);
 vector<string> collect_files_by_names(const string& root,  const string& filenames);
 void print_filter_comparators();
+void display_matrix(ComparisonMatrix &matrix);
 
 int main(int ac, const char* av[]){
 
@@ -70,6 +72,7 @@ int main(int ac, const char* av[]){
     ("list,l", "ignore all other argumtents and give a list of available "
     "filters and comparators.")
     ("show,s", "use a visual difftool to show the best machtes.")
+    ("matrix,m", "use gnuplot to display a matrix with the matches")
     ;
 
     po::variables_map vm;
@@ -185,6 +188,10 @@ int main(int ac, const char* av[]){
             std::this_thread::sleep_for (std::chrono::seconds(1));
         }
     }
+    
+    if(results.size()>0 and vm.count("matrix")){
+        display_matrix(comp_matrix);
+    }
 
 }
 
@@ -252,4 +259,25 @@ void print_filter_comparators(){
         std::cout<<"\t'"<<name<<"':   "<<desc <<"\n";
     
     }
+}
+    
+void display_matrix(ComparisonMatrix &matrix){
+    Gnuplot gp;
+	// For debugging or manual editing of commands:
+	//Gnuplot gp(std::fopen("plot.gnu"));
+	// or
+	//Gnuplot gp("tee plot.gnu | gnuplot -persist");
+    auto results = matrix.get_comp_matrix();
+    auto keys =  matrix.get_keys();
+    auto sorted_results = matrix.get_sorted_matches();
+    
+    //std::string xtics = "set xtics (\""+keys[0]+"\" 0";
+    //for(uint i=1; i<keys.size();++i)
+    //    xtics += ", \""+keys[i]+"\" "+std::to_string(i);
+    //xtics += ")\n";
+    //gp << xtics;    
+    gp << "set palette defined (0 \"white\", 1 \"red\")\n";
+    gp << "set cbrange [0:"<<sorted_results.front().similarity<<"]\n";
+	gp << "plot '-' matrix with image \n";
+	gp.send1d(results);   
 }
