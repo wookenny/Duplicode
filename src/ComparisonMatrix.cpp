@@ -75,6 +75,8 @@ void ComparisonMatrix::calculateComparisionMatrix(){
     //how to get group names
     if(calculated_) return;
     
+    max_ = -1;
+    min_ = -1;
     filterCodes();
     
     pairs_.clear();
@@ -91,9 +93,9 @@ void ComparisonMatrix::calculateComparisionMatrix(){
     std::cout<<"comparisons in total: "<<pairs_.size()<<std::endl;
     std::cout<<"using "<<NUM_THREADS<<" threads for processing" <<std::endl;
     //c++11 thread version!:
-    std::thread t[NUM_THREADS];
+    std::vector<std::thread> t;
     for (int i = 0; i < NUM_THREADS; ++i) {
-        t[i] = std::thread(&ComparisonMatrix::compute_via_thread_, this, i);
+        t.push_back(std::thread(&ComparisonMatrix::compute_via_thread_, this, i));
     }
 
     //Join the threads with the main thread
@@ -104,6 +106,18 @@ void ComparisonMatrix::calculateComparisionMatrix(){
     std::cout<<"\r  Done  "<<std::endl;
     //std::cout<<"\r";
     //std::cout<<"100 %        "<<std::endl;
+    
+    //collect max/min
+    for(const auto &i: comparisonResult_){
+        for(const auto &j: comparisonResult_[i.first]){
+            auto &comp = comparisonResult_[i.first][j.first];
+            if(min_ < 0 or min_ > comp.val)
+                min_ = comp.val;
+            if(max_ < 0 or max_ < comp.val)
+                max_ = comp.val;    
+        }
+    }
+    
     calculated_ = true;
 }
 
@@ -224,4 +238,30 @@ std::vector<std::string> ComparisonMatrix::get_keys() const{
         keys.push_back(kv.first);
     std::sort(std::begin(keys),std::end(keys)); 
     return keys;
+}
+
+Similarity ComparisonMatrix::operator()(const std::string& s1, 
+                                        const std::string& s2)
+{
+    if(s1<s2)
+        return comparisonResult_[s1][s2];
+    else
+        return comparisonResult_[s2][s1];    
+}
+
+
+void ComparisonMatrix::visual_diff(const std::string& s1, const std::string& s2){
+    if(s1==s2) return;
+    std::string difftool = "setsid ";
+    difftool += find_difftool();
+    std::string syscall = difftool;
+    Similarity sim = operator()(s1,s2);
+
+    syscall += " "+root_+sim.hint1;
+    syscall += " "+root_+sim.hint2;
+
+    syscall+= " 2>&1 >/dev/null | grep 'something' &";
+    //catch return value
+    if(system(syscall.c_str())){};
+
 }

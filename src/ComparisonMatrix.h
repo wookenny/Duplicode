@@ -47,6 +47,12 @@ struct CodeMatch{
     std::string file2;
 };
 
+struct Similarity{
+    double val;
+    std::string hint1;
+    std::string hint2;
+};
+        
 //todo Groupnumer is a template argument
 class ComparisonMatrix{
 
@@ -111,17 +117,19 @@ class ComparisonMatrix{
         std::vector<CodeMatch> get_sorted_matches(); 
         std::vector<std::vector<double>> get_comp_matrix();
         std::vector<std::string> get_keys() const;
+        
+        Similarity operator()(const std::string&, const std::string& );
+        
+        double get_max(){ return max_;}
+        double get_min(){ return min_;}
+        void visual_diff(const std::string&, const std::string&);
     private:
         std::unordered_map<std::string,std::vector<CodeFile>> codeFiles_;
         std::unique_ptr<CompareAlgo> comparator_;
         bool calculated_;
         std::string root_;
         
-        struct Similarity{
-            double val;
-            std::string hint1;
-            std::string hint2;
-        };
+
         std::unordered_map<std::string,std::unordered_map<std::string,Similarity>> comparisonResult_;
         std::vector<std::tuple<std::string,std::string>> pairs_;
        
@@ -132,5 +140,6 @@ class ComparisonMatrix{
                               std::string *hint2 = nullptr ) const;
                               
         void compute_via_thread_(int tid);
-   
+        double max_;
+        double min_;
 };

@@ -26,7 +26,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class FilterDelete : public AbstractTestFilter{
 
      public:
-        std::string operator()(const std::string& s) const {return "";} 
+        std::string operator()(const std::string& ) const {return "";} 
         const std::string name = "Filter:DeleteAllText"; 
 };
 

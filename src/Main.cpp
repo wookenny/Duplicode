@@ -26,12 +26,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "ComparatorFactory.h"
 #include "Common.h"
 #include "gnuplot-iostream.h"
+ #include "window.h"
 #include <string>
 #include <memory>
 #include <iostream>
 #include <chrono>  
 #include <thread>
 #include <boost/program_options.hpp>
+#include <QApplication>
 
 #define VERSION "0.0.1"
 
@@ -46,10 +48,9 @@ vector<string> collect_files_by_names(const string& root,  const string& filenam
 void print_filter_comparators();
 void display_matrix(ComparisonMatrix &matrix);
 
-int main(int ac, const char* av[]){
-
+int main(int ac, char* av[]){
+    QApplication app(ac, av);
     string root,suffixes, filter, comparator, ignore, filenames;
-    bool show;
 
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -149,7 +150,7 @@ int main(int ac, const char* av[]){
     //comp_matrix.print_files();
     //comp_matrix.calculateComparisionMatrix(); 
     auto results = comp_matrix.get_sorted_matches();
-    for(int i = 0; i<15 and i<results.size();++i){
+    for(uint i = 0; i<15 and i<results.size();++i){
         CodeMatch &m = results[i]; 
         std::cout<< m.group1<<" vs. "<<m.group2<<":\t"<<m.similarity<<"\n";  
     }
@@ -170,7 +171,7 @@ int main(int ac, const char* av[]){
     if(results.size()>0 and vm.count("show")){
          std::cout<<"using visual difftool to view findings"<<std::endl;
          std::string difftool = find_difftool();
-         for(int i = 0;i<results.size();++i){
+         for(uint i = 0;i<results.size();++i){
             CodeMatch &m = results[i];
             std::cout<<"Comparing: '"<<m.group1<<"' '"<<m.group2<<"'  (";
             std::cout<<m.similarity<<")"<<std::endl;
@@ -184,13 +185,18 @@ int main(int ac, const char* av[]){
             std::string syscall = difftool;
             syscall += " "+root+m.file1;
             syscall += " "+root+m.file2 + " 2>&1 >/dev/null | grep 'something'";
-            int r = system(syscall.c_str());    
+            if(system(syscall.c_str())){};
+                
             std::this_thread::sleep_for (std::chrono::seconds(1));
         }
     }
     
+    
     if(results.size()>0 and vm.count("matrix")){
-        display_matrix(comp_matrix);
+        Window window(comp_matrix);
+        window.show();
+        //display_matrix(comp_matrix);
+        app.exec();
     }
 
 }
@@ -261,8 +267,8 @@ void print_filter_comparators(){
     }
 }
     
-void display_matrix(ComparisonMatrix &matrix){
-    Gnuplot gp;
+void inline display_matrix(ComparisonMatrix &matrix){
+   
 	// For debugging or manual editing of commands:
 	//Gnuplot gp(std::fopen("plot.gnu"));
 	// or
@@ -271,13 +277,18 @@ void display_matrix(ComparisonMatrix &matrix){
     auto keys =  matrix.get_keys();
     auto sorted_results = matrix.get_sorted_matches();
     
+    /*
     //std::string xtics = "set xtics (\""+keys[0]+"\" 0";
     //for(uint i=1; i<keys.size();++i)
     //    xtics += ", \""+keys[i]+"\" "+std::to_string(i);
     //xtics += ")\n";
-    //gp << xtics;    
+    //gp << xtics; 
+    Gnuplot gp;   
     gp << "set palette defined (0 \"white\", 1 \"red\")\n";
     gp << "set cbrange [0:"<<sorted_results.front().similarity<<"]\n";
 	gp << "plot '-' matrix with image \n";
 	gp.send1d(results);   
+    */
+    Window window(matrix);
+    window.show();
 }
