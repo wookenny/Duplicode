@@ -131,7 +131,7 @@ void RenderArea::mousePressEvent(QMouseEvent *event)
         for(uint j= 0; j<keys.size();++j){
             //int v = dis(gen);
             int v = 0;
-            if(i!=j)
+            if(i!=j and min!=max)
                 v =  255*(matrix_(keys[i],keys[j]).val-min)/(max-min);
             painter.fillRect(QRect(i*w, j*h, w+1, h+1),QColor(255,255-v,255-v,255));
         }    
