@@ -152,7 +152,9 @@ int main(int ac, char* av[]){
     auto results = comp_matrix.get_sorted_matches();
     for(uint i = 0; i<15 and i<results.size();++i){
         CodeMatch &m = results[i]; 
-        std::cout<< m.group1<<" vs. "<<m.group2<<":\t"<<m.similarity<<"\n";  
+        std::cout<< m.group1<<" vs. "<<m.group2<<":\t"<<m.similarity
+                 <<"\t"<<split(m.file1,'/').back()
+                 <<" and "<<split(m.file2,'/').back() <<"\n";  
     }
     //print statistics
     if(results.size()>0){
@@ -276,19 +278,5 @@ void inline display_matrix(ComparisonMatrix &matrix){
     auto results = matrix.get_comp_matrix();
     auto keys =  matrix.get_keys();
     auto sorted_results = matrix.get_sorted_matches();
-    
-    /*
-    //std::string xtics = "set xtics (\""+keys[0]+"\" 0";
-    //for(uint i=1; i<keys.size();++i)
-    //    xtics += ", \""+keys[i]+"\" "+std::to_string(i);
-    //xtics += ")\n";
-    //gp << xtics; 
-    Gnuplot gp;   
-    gp << "set palette defined (0 \"white\", 1 \"red\")\n";
-    gp << "set cbrange [0:"<<sorted_results.front().similarity<<"]\n";
-	gp << "plot '-' matrix with image \n";
-	gp.send1d(results);   
-    */
-    Window window(matrix);
-    window.show();
+
 }

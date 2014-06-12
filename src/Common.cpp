@@ -24,6 +24,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "Common.h"
 #include <sstream>
 #include <algorithm>
+#include <boost/regex.hpp>
 #include "magic.h"
 namespace fs = boost::filesystem;
 using namespace std;
@@ -41,7 +42,8 @@ std::vector<boost::filesystem::path> get_all_files_by_extensions(const fs::path&
         fs::recursive_directory_iterator it(root);
         fs::recursive_directory_iterator endit;
         while(it != endit){
-            if (fs::is_regular_file(*it) and it->path().extension() == ext){
+            if (fs::is_regular_file(*it)  and not fs::is_directory(*it) 
+                                            and it->path().extension() == ext){
                 if(not file_in_list(it->path().filename().string(),ignore))  
                     files.push_back(it->path());
             }
@@ -62,9 +64,18 @@ std::vector<boost::filesystem::path> get_all_files_by_name(
         fs::recursive_directory_iterator it(root);
         fs::recursive_directory_iterator endit;
         while(it != endit){
-            if (fs::is_regular_file(*it)){
-                if(file_in_list(it->path().filename().string(),filenames))  
-                    files.push_back(it->path());
+            if (fs::is_regular_file(*it) and not fs::is_directory(*it)){
+                std::string filename =  it->path().filename().string();
+                for(const std::string& s:  split(filenames,',')){
+                    boost::regex expression(s);
+                    boost::cmatch char_matches; 
+                    
+                    if(boost::regex_match(filename.c_str(),
+                                           char_matches, 
+                                           expression)){ 
+                        files.push_back(it->path());
+                    }        
+                }
             }
             ++it;
         }
@@ -85,7 +96,8 @@ std::vector<boost::filesystem::path> get_all_source_files(const fs::path& root,
         fs::recursive_directory_iterator it(root);
         fs::recursive_directory_iterator endit;
         while(it != endit){
-            if (fs::is_regular_file(*it) and is_source(it->path().string())){
+            if (fs::is_regular_file(*it) and is_source(it->path().string())  
+                                                and not fs::is_directory(*it)){
                 if(not file_in_list(it->path().filename().string(),ignore)) 
                     files.push_back(it->path());
             }
