@@ -64,8 +64,9 @@ int main(int ac, char* av[]){
     ("ignore,i", po::value<string>(&ignore)->default_value(""),
     "comma separated list of files to be ignored. ")
     ("exclusive,x", po::value<string>(&filenames),
-    "comma separated list of files to considered exclusively."
-    " Everything else will be ignored. E.g., 'Decompress.java'")
+    "comma separated list of files to be considered exclusively."
+    " Everything else will be ignored. Regular Expression can be used to match similar files."
+    " E.g., 'Decompress.java,Compress,java' or '.*press.java'")
     ("filter,f", po::value<string>(&filter)->default_value(""),
     "comma separated filter to normalize the source code")
     ("comparator,c", po::value<string>(&comparator)->default_value("DiffLib"),
@@ -73,7 +74,8 @@ int main(int ac, char* av[]){
     ("list,l", "ignore all other argumtents and give a list of available "
     "filters and comparators.")
     ("show,s", "use a visual difftool to show the best machtes.")
-    ("matrix,m", "use gnuplot to display a matrix with the matches")
+    ("matrix,m", "display the resutls as a heatmap. A left click displays the folders"
+    " and the value of the similarity, a right click opens a tool to inspect both files for a match. ")
     ;
 
     po::variables_map vm;

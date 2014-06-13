@@ -133,7 +133,7 @@ class ComparisonMatrix{
         std::unordered_map<std::string,std::unordered_map<std::string,Similarity>> comparisonResult_;
         std::vector<std::tuple<std::string,std::string>> pairs_;
        
-        MultipleFileComp comp_mode_ = SameNameMax;        
+        MultipleFileComp comp_mode_ = SingleBestMatch;        
         double compare_groups(const std::vector<CodeFile>& g1,
                               const std::vector<CodeFile>& g2,
                               std::string *hint1 = nullptr,
