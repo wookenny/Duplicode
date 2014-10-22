@@ -25,7 +25,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "ComparisonMatrix.h"
 #include "ComparatorFactory.h"
 #include "Common.h"
-#include "gnuplot-iostream.h"
 #include "window.h"
 
 
@@ -121,7 +120,7 @@ int main(int ac, char* av[]){
     }   
     
     
-    //call it, baby
+    //call it
     std::vector<std::string> files;
     if(vm.count("exclusive")){
         files  = collect_files_by_names(root, filenames);
@@ -221,7 +220,6 @@ void help(const po::options_description &desc){
 
     
 vector<string> collect_files(const string& root, const string& suffixes, const std::string& ignore=""){
-    //TODO: maybe not using f.string but more involed things with filesystem:;path object 
     vector<string> matching_files;
     vector<string> types = split(suffixes,',');
     if (types.size()==0){
@@ -278,10 +276,6 @@ void print_filter_comparators(){
     
 void inline display_matrix(ComparisonMatrix &matrix){
    
-	// For debugging or manual editing of commands:
-	//Gnuplot gp(std::fopen("plot.gnu"));
-	// or
-	//Gnuplot gp("tee plot.gnu | gnuplot -persist");
     auto results = matrix.get_comp_matrix();
     auto keys =  matrix.get_keys();
     auto sorted_results = matrix.get_sorted_matches();

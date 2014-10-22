@@ -10,7 +10,6 @@ HEADERS       = src/AbstractTestComparator.h \
                 src/difflib.h \
                 src/FilterDeleteComments.h \
                 src/FilterFactory.h \
-                src/gnuplot-iostream.h \
                 src/magic.h \
                 src/renderarea.h \
                 src/window.h \
@@ -37,5 +36,5 @@ SOURCES       = src/Common.cpp  \
 INCLUDEPATH += /usr/include/boost/
 LIBS += -L/usr/lib64/ -lboost_regex -lboost_iostreams -lboost_filesystem -lboost_system -lboost_program_options -l:libmagic.so.1
 CONFIG += qt
-QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic
+QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic -Werror
 TARGET = duplicode
