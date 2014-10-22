@@ -1,5 +1,5 @@
 /**
-Copyright (c) 2014 Torsten J. Gellert, Jan-Phillip W. Kappmeier
+Copyright (c) 2014 Torsten J. Gellert
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -26,7 +26,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "ComparatorFactory.h"
 #include "Common.h"
 #include "gnuplot-iostream.h"
- #include "window.h"
+#include "window.h"
+
+
 #include <string>
 #include <memory>
 #include <iostream>
@@ -78,6 +80,10 @@ int main(int ac, char* av[]){
     " and the value of the similarity, a right click opens a tool to inspect both files for a match. ")
     ;
 
+    if(ac==1){
+        help(desc);
+        return 0;
+    }
     po::variables_map vm;
 
     try{
@@ -197,9 +203,8 @@ int main(int ac, char* av[]){
     
     
     if(results.size()>0 and vm.count("matrix")){
-        Window window(comp_matrix);
-        window.show();
-        //display_matrix(comp_matrix);
+        Window *w = new Window(comp_matrix);
+        w->show();
         app.exec();
     }
 

@@ -1,5 +1,3 @@
-// vim:foldmethod=marker
-
 /*
 Copyright (c) 2013 Daniel Stahlke (dan@stahlke.org)
 

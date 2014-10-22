@@ -1,5 +1,5 @@
 /**
-Copyright (c) 2014 Torsten J. Gellert, Jan-Phillip W. Kappmeier
+Copyright (c) 2014 Torsten J. Gellert
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

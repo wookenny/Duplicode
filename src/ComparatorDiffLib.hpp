@@ -1,5 +1,5 @@
 /**
-Copyright (c) 2014 Torsten J. Gellert, Jan-Phillip W. Kappmeier
+Copyright (c) 2014 Torsten J. Gellert
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -25,16 +25,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "AbstractTestComparator.h"
 #include <string>
 #include <iostream>
-//#include "difflib.h"
-#include "difflibTG.hpp"
+#include "difflib.h"
+
 
 class ComparatorDiffLib : public AbstractTestComparator{
     public:
-        double operator()(const std::string& c1, const std::string& c2) const{
-            auto matcher = SequenceMatcher(c1,c2);
+        double operator()(const std::string& c1, const std::string& c2) const{           
+            auto matcher = difflib::MakeSequenceMatcher(c1, c2);
             return matcher.ratio();
-            
-            //auto matcher = difflib::MakeSequenceMatcher(c1, c2);
-            //return matcher.ratio();
         } 
 }; 

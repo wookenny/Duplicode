@@ -13,7 +13,14 @@ HEADERS       = src/AbstractTestComparator.h \
                 src/gnuplot-iostream.h \
                 src/magic.h \
                 src/renderarea.h \
-                src/window.h
+                src/window.h \
+                src/ComparatorDiffLib.hpp \
+                src/ComparatorIdentical.hpp \
+                src/FilterDelete.hpp \
+                src/FilterDeleteWhitespace.hpp \
+                src/FilterIdentity.hpp \
+                src/FilterToLower.hpp \
+
 
 SOURCES       = src/Common.cpp  \
                 src/ComparatorFactory.cpp \
