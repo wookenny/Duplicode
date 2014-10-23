@@ -22,8 +22,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractTestComparator.h"
-#include "AbstractTestFilter.h"
+#include "AbstractComparator.h"
+#include "AbstractFilter.h"
+#include "CodeFile.hpp"
 #include <vector>
 #include <memory>
 #include <string>
@@ -32,16 +33,16 @@ class CompareAlgo{
 
     
     private:
-        std::vector<std::unique_ptr<AbstractTestFilter>> filters_;
-        std::unique_ptr<AbstractTestComparator> comparator_;
+        std::vector<std::unique_ptr<AbstractFilter>> filters_;
+        std::unique_ptr<AbstractComparator> comparator_;
 
     public:
         CompareAlgo() = default;      
 
-        void addFilter(std::unique_ptr<AbstractTestFilter>& );
-        void addFilter(std::unique_ptr<AbstractTestFilter>&& );
-
-        void setComparator(std::unique_ptr<AbstractTestComparator>& ); 
+        void addFilter(std::unique_ptr<AbstractFilter>& );
+        void addFilter(std::unique_ptr<AbstractFilter>&& );
+        void initialize_comparators( const CodeMap& codes ) const; 
+        void setComparator(std::unique_ptr<AbstractComparator>& ); 
         std::string filter(const std::string&) const;       
         double compare(const std::string&, const std::string&) const;  
         double filterAndCompare(const std::string&, const std::string&) const;  

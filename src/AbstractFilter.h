@@ -24,7 +24,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #pragma once
 #include <string>
 
-class AbstractTestComparator{
+class AbstractFilter{
+    
     public:
-        virtual double operator()(const std::string&, const std::string&) const = 0; 
-}; 
+        virtual std::string operator()(const std::string&) const = 0; 
+        const std::string name = "Filter:Abstract"; 
+};
+

@@ -22,29 +22,20 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractComparator.h"
 #include <string>
-#include <cmath>
-#include <iostream>
+#include <set>
 
-class ComparatorLevenshteinDistance : public AbstractComparator{
- 
-public:
-        double operator()(const std::string& c1, const std::string& c2) const{
+#include "AbstractComparator.h"
+#include "ComparisonMatrix.h"
 
-            uint dist = 0;
-            if(c1.size() >= c2.size())
-                dist = levenshteinDistance(c1,c2);
-            else 
-                dist = levenshteinDistance(c2,c1);
-            double n = std::min(c1.size(),c2.size());
-            double N = std::max(c1.size(),c2.size());       
-            double sim = (dist-(N-n))/std::max(1.0*dist,1.);
-
-            return std::max(sim,0.);            
-        }
-
-private:
-       uint levenshteinDistance(const std::string&,
-                                  const std::string&) const;
+class ComparatorUncommonStrings : public AbstractComparator{
+    public:
+        double operator()(const std::string& c1, const std::string& c2) const;
+        void init( const CodeMap& codes);
+        
+    private:
+        //dict of words used by at most two groups
+        std::set<std::string> uncommon_strings_;
+        
+        static std::set<std::string> strings_from_file_(const std::string& c);
 }; 

@@ -39,39 +39,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 std::string get_group(const std::string &s);
 
-struct CodeMatch{
-    std::string group1;
-    std::string group2;
-    double similarity;
-    std::string file1;
-    std::string file2;
-};
-
-struct Similarity{
-    double val;
-    std::string hint1;
-    std::string hint2;
-};
         
-//todo Groupnumer is a template argument
 class ComparisonMatrix{
-
-    struct CodeFile{
-           std::string filename;  
-           std::string content;
-           std::string filtered_content; 
-           
-           CodeFile(const std::string f,const std::string root){
-                std::ifstream ifs(root+f);
-                std::string c( (std::istreambuf_iterator<char>(ifs) ),
-                                      (std::istreambuf_iterator<char>() ) );
-                assert(c!="");
-                filename = f;
-                content  = c;
-                filtered_content = "";                       
- 
-           }
-    };
 
     enum MultipleFileComp{SameNameMax, SameNameMultiply, SingleBestMatch}; 
    
@@ -79,13 +48,6 @@ class ComparisonMatrix{
         ComparisonMatrix() = delete;
         ComparisonMatrix(std::string root){
             std::unique_ptr<CompareAlgo> comp{new CompareAlgo()};
-            /*
-            std::unique_ptr<AbstractTestComparator> comparator
-                                          {new ComparatorDiffLib()};
-            comp->setComparator(comparator);
-            std::unique_ptr<AbstractTestFilter> filter{new FilterIdentity()};
-            comp->addFilter(filter);
-            */
             comparator_ = std::move(comp);
             calculated_ = false;
             root_ = root;
@@ -103,11 +65,11 @@ class ComparisonMatrix{
             calculated_ = false;
         }        
 
-        void addFilter(std::unique_ptr<AbstractTestFilter> &f){
+        void addFilter(std::unique_ptr<AbstractFilter> &f){
             comparator_->addFilter(f);  
         }
     
-        void setComparator(std::unique_ptr<AbstractTestComparator> &c){
+        void setComparator(std::unique_ptr<AbstractComparator> &c){
             comparator_->setComparator(c);  
         }
 
@@ -123,6 +85,7 @@ class ComparisonMatrix{
         double get_max(){ return max_;}
         double get_min(){ return min_;}
         void visual_diff(const std::string&, const std::string&);
+   
     private:
         std::unordered_map<std::string,std::vector<CodeFile>> codeFiles_;
         std::unique_ptr<CompareAlgo> comparator_;
@@ -134,10 +97,10 @@ class ComparisonMatrix{
         std::vector<std::tuple<std::string,std::string>> pairs_;
        
         MultipleFileComp comp_mode_ = SingleBestMatch;        
-        double compare_groups(const std::vector<CodeFile>& g1,
+        double compare_groups_(const std::vector<CodeFile>& g1,
                               const std::vector<CodeFile>& g2,
                               std::string *hint1 = nullptr,
-                              std::string *hint2 = nullptr ) const;
+                              std::string *hint2 = nullptr ) const;       
                               
         void compute_via_thread_(int tid);
         double max_;

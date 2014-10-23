@@ -1,10 +1,11 @@
 SOURCE        = src/
-HEADERS       = src/AbstractTestComparator.h \
-                src/AbstractTestFilter.h \
+HEADERS       = src/AbstractComparator.h \
+                src/AbstractFilter.h \
                 src/Common.h \
                 src/ComparatorFactory.h \
                 src/ComparatorLevenshteinDistance.h \
                 src/ComparatorLongestMatch.h \
+                src/ComparatorUncommonStrings.h \
                 src/CompareAlgo.h \
                 src/ComparisonMatrix.h \
                 src/difflib.h \
@@ -19,12 +20,14 @@ HEADERS       = src/AbstractTestComparator.h \
                 src/FilterDeleteWhitespace.hpp \
                 src/FilterIdentity.hpp \
                 src/FilterToLower.hpp \
+                src/CodeFile.hpp
 
 
 SOURCES       = src/Common.cpp  \
                 src/ComparatorFactory.cpp \
                 src/ComparatorLevenshteinDistance.cpp \
                 src/ComparatorLongestMatch.cpp \
+                src/ComparatorUncommonStrings.cpp \
                 src/CompareAlgo.cpp \
                 src/ComparisonMatrix.cpp \
                 src/FilterDeleteComments.cpp \
@@ -36,5 +39,5 @@ SOURCES       = src/Common.cpp  \
 INCLUDEPATH += /usr/include/boost/
 LIBS += -L/usr/lib64/ -lboost_regex -lboost_iostreams -lboost_filesystem -lboost_system -lboost_program_options -l:libmagic.so.1
 CONFIG += qt
-QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic -Werror
+QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic -Werror -g
 TARGET = duplicode

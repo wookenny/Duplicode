@@ -23,12 +23,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include <string>
+#include <vector>
+#include <unordered_map>
 
-class AbstractTestFilter{
-    
+#include "CodeFile.hpp"
+
+typedef std::unordered_map<std::string,std::vector<CodeFile>> CodeMap;
+
+class AbstractComparator{
     public:
-        virtual std::string operator()(const std::string&) const = 0; 
-        const std::string name = "Filter:Abstract"; 
-        //TODO: I want to have a virtual behaviot for this field!!
-};
-
+        virtual double operator()(const std::string&, const std::string&) const = 0;
+        virtual void init(const CodeMap& ) {}
+       
+}; 

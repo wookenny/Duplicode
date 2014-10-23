@@ -22,11 +22,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractTestComparator.h"
+#include "AbstractComparator.h"
 #include <string>
 #include <cmath> 
 
-class ComparatorLongestMatch : public AbstractTestComparator{
+class ComparatorLongestMatch : public AbstractComparator{
  
 public:
         double operator()(const std::string& c1, const std::string& c2) const;

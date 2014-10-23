@@ -29,31 +29,31 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "FilterIdentity.hpp"
 #include "FilterToLower.hpp"
 
-void FilterFactory::generate_filter(std::unique_ptr<AbstractTestFilter> &filter,
+void FilterFactory::generate_filter(std::unique_ptr<AbstractFilter> &filter,
                                     const std::string& f)
 {
     if(f=="DeleteComments"){
-        std::unique_ptr<AbstractTestFilter> f{new FilterDeleteComments()};
+        std::unique_ptr<AbstractFilter> f{new FilterDeleteComments()};
         filter = std::move(f);
         return;
     }
     if(f=="DeleteAll"){
-        std::unique_ptr<AbstractTestFilter> f{new FilterDelete()};
+        std::unique_ptr<AbstractFilter> f{new FilterDelete()};
         filter = std::move(f);
         return;
     }
      if(f=="DeleteWhitespace"){
-        std::unique_ptr<AbstractTestFilter> f{new FilterDeleteWhitespace()};
+        std::unique_ptr<AbstractFilter> f{new FilterDeleteWhitespace()};
         filter = std::move(f);
         return;
     }
     if(f=="Identity"){
-        std::unique_ptr<AbstractTestFilter> f{new FilterIdentity()};
+        std::unique_ptr<AbstractFilter> f{new FilterIdentity()};
         filter = std::move(f);
         return;
     }
     if(f=="ToLower"){
-        std::unique_ptr<AbstractTestFilter> f{new FilterToLower()};
+        std::unique_ptr<AbstractFilter> f{new FilterToLower()};
         filter = std::move(f);
         return;
     }    

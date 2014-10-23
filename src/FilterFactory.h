@@ -28,11 +28,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <tuple>
 #include <vector>
 
-#include "AbstractTestFilter.h"
+#include "AbstractFilter.h"
 
 namespace FilterFactory{
 
-   void generate_filter(std::unique_ptr<AbstractTestFilter> &filter,
+   void generate_filter(std::unique_ptr<AbstractFilter> &filter,
                         const std::string &f);
    std::vector<std::string> filter_list();
    std::vector<std::tuple<std::string,std::string>> filterdescription_list();

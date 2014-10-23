@@ -22,10 +22,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractTestFilter.h"
+#include "AbstractFilter.h"
 #include <boost/regex.hpp>
 
-class FilterDeleteWhitespace : public AbstractTestFilter{
+class FilterDeleteWhitespace : public AbstractFilter{
 
      public:
         std::string operator()(const std::string& s) const{

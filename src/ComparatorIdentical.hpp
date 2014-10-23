@@ -22,10 +22,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractTestComparator.h"
+#include "AbstractComparator.h"
 #include <string>
-#include <iostream>
-class ComparatorIdentical : public AbstractTestComparator{
+
+class ComparatorIdentical : public AbstractComparator{
     public:
         double operator()(const std::string& c1, const std::string& c2) const{
             return (c1==c2)?1.:0.;

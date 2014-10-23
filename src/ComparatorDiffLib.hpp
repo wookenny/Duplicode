@@ -22,13 +22,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractTestComparator.h"
+#include "AbstractComparator.h"
 #include <string>
 #include <iostream>
 #include "difflib.h"
 
 
-class ComparatorDiffLib : public AbstractTestComparator{
+class ComparatorDiffLib : public AbstractComparator{
     public:
         double operator()(const std::string& c1, const std::string& c2) const{           
             auto matcher = difflib::MakeSequenceMatcher(c1, c2);

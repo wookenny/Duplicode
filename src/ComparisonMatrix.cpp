@@ -24,6 +24,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "ComparisonMatrix.h"
 #include <algorithm>
 #include <thread>
+#include <limits>
 
 static const int NUM_THREADS = std::thread::hardware_concurrency()*2;
 
@@ -33,8 +34,6 @@ std::string get_group(const std::string &s){
 }
 
 void ComparisonMatrix::addCodes(std::vector<std::string> &codes){
-    //TODO find group numbers!
-    //TODO: use codefiles instead of strings!
     codeFiles_.clear();
     for(auto s: codes){
         std::string group = get_group(s);
@@ -56,12 +55,12 @@ void ComparisonMatrix::compute_via_thread_(int tid) {
         std::string group2 = std::get<1>(pairs_[i]);
         //std::cout<< "comparing: "<<group1<<" and "<<group2<<std::endl;
         std::string hint1, hint2;
-        double sim = compare_groups(codeFiles_[group1], codeFiles_[group2],
+        double sim = compare_groups_(codeFiles_[group1], codeFiles_[group2],
                                     &hint1, &hint2);
         Similarity simil;
         simil.val = sim;
         simil.hint1 = hint1;
-        simil.hint2 = hint2;                               
+        simil.hint2 = hint2;                           
         comparisonResult_[group1][group2] = simil;   
         if(tid==0){
             std::cout<<"\r "<<100*i/pairs_.size()<<"%  ";
@@ -74,9 +73,9 @@ void ComparisonMatrix::compute_via_thread_(int tid) {
 void ComparisonMatrix::calculateComparisionMatrix(){
     //how to get group names
     if(calculated_) return;
-    
-    max_ = -1;
-    min_ = -1;
+
+    max_ = - std::numeric_limits<double>::infinity();
+    min_ =   std::numeric_limits<double>::infinity();
     filterCodes();
     
     pairs_.clear();
@@ -87,17 +86,14 @@ void ComparisonMatrix::calculateComparisionMatrix(){
             Similarity simil;
             comparisonResult_[keys[i]][keys[j]] = simil;    
         }
-        
 
-    
     std::cout<<"comparisons in total: "<<pairs_.size()<<std::endl;
     std::cout<<"using "<<NUM_THREADS<<" threads for processing" <<std::endl;
-    //c++11 thread version!:
+
     std::vector<std::thread> t;
     for (int i = 0; i < NUM_THREADS; ++i) {
         t.push_back(std::thread(&ComparisonMatrix::compute_via_thread_, this, i));
     }
-
     //Join the threads with the main thread
     for (int i = 0; i < NUM_THREADS; ++i) {
         t[i].join();
@@ -111,13 +107,10 @@ void ComparisonMatrix::calculateComparisionMatrix(){
     for(const auto &i: comparisonResult_){
         for(const auto &j: comparisonResult_[i.first]){
             auto &comp = comparisonResult_[i.first][j.first];
-            if(min_ < 0 or min_ > comp.val)
-                min_ = comp.val;
-            if(max_ < 0 or max_ < comp.val)
-                max_ = comp.val;    
+            min_ = std::min(min_, comp.val);
+            max_ = std::max(max_, comp.val);
         }
     }
-    
     calculated_ = true;
 }
 
@@ -125,8 +118,7 @@ std::vector<std::vector<double>> ComparisonMatrix::get_comp_matrix(){
     calculateComparisionMatrix();
     
     auto keys = get_keys(); 
-    
-    //hashmp to matrix
+    //hashmap to matrix
     std::vector<std::vector<double>> result;
     for(uint i = 0; i < keys.size();++i)
         result.push_back(std::vector<double>(keys.size(),0));
@@ -142,6 +134,8 @@ void ComparisonMatrix::filterCodes(){
     for ( auto &group : codeFiles_)
         for(CodeFile& f: group.second)
             f.filtered_content = comparator_->filter(f.content);
+
+    comparator_->initialize_comparators( codeFiles_ );
 }
 
 void ComparisonMatrix::print_files() const{
@@ -154,11 +148,11 @@ void ComparisonMatrix::print_files() const{
     std::cout << std::endl;
 }
 
-double ComparisonMatrix::compare_groups(const std::vector<CodeFile>& g1,
+double ComparisonMatrix::compare_groups_(const std::vector<CodeFile>& g1,
                                     const std::vector<CodeFile>& g2, 
                                     std::string* h1, std::string* h2) const
 {
-    double match = 0;
+    double match = -std::numeric_limits<double>::infinity();
     switch(comp_mode_){
         case SingleBestMatch:
             //First implementation
@@ -223,7 +217,6 @@ std::vector<CodeMatch> ComparisonMatrix::get_sorted_matches()
             matches.push_back(match);
         }
     }
-    
     //sort them
     auto order = [](const CodeMatch& a, const CodeMatch& b) { 
         return a.similarity > b.similarity; 
@@ -263,5 +256,5 @@ void ComparisonMatrix::visual_diff(const std::string& s1, const std::string& s2)
     syscall+= " 2>&1 >/dev/null | grep 'something' &";
     //catch return value
     if(system(syscall.c_str())){};
-
 }
+

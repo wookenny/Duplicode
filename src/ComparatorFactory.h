@@ -28,11 +28,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <tuple>
 #include <vector>
 
-#include "AbstractTestComparator.h"
+#include "AbstractComparator.h"
 
 namespace ComparatorFactory{
 
-   void generate_comparator(std::unique_ptr<AbstractTestComparator> &comp,
+   void generate_comparator(std::unique_ptr<AbstractComparator> &comp,
                         const std::string &f);
    std::vector<std::string> comparator_list();
    std::vector<std::tuple<std::string,std::string>> comparatordescription_list();

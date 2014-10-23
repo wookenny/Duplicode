@@ -22,8 +22,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractTestFilter.h"
-class FilterIdentity : public AbstractTestFilter{
+#include "AbstractFilter.h"
+class FilterIdentity : public AbstractFilter{
 
      public:
         std::string operator()(const std::string& s) const {return s;}

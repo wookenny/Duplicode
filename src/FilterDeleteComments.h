@@ -22,8 +22,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractTestFilter.h"
-class FilterDeleteComments : public AbstractTestFilter{
+#include "AbstractFilter.h"
+class FilterDeleteComments : public AbstractFilter{
 
     //enum Language{}
 

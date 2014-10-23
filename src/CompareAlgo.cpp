@@ -43,6 +43,7 @@ double CompareAlgo::compare(const string& code1,const string& code2) const{
 
 double CompareAlgo::filterAndCompare(const std::string& c1,
                                      const std::string& c2) const{
+
     string filtered1 = filter(c1);
     string filtered2 = filter(c2);
     cout<<"Testing: \n'"<<c1<<"'\n'"<<c2<<"'\n";
@@ -52,15 +53,20 @@ double CompareAlgo::filterAndCompare(const std::string& c1,
     return compare(filtered1, filtered2);
 }
 
-void CompareAlgo::addFilter(unique_ptr<AbstractTestFilter>& filter_ptr) {
+void CompareAlgo::addFilter(unique_ptr<AbstractFilter>& filter_ptr) {
     filters_.push_back(move(filter_ptr));
 }
 
-void CompareAlgo::addFilter(std::unique_ptr<AbstractTestFilter>&& filter_ptr){
+void CompareAlgo::addFilter(std::unique_ptr<AbstractFilter>&& filter_ptr){
     filters_.push_back(move(filter_ptr));
 }
 
 
-void CompareAlgo::setComparator(unique_ptr<AbstractTestComparator>& c){
+void CompareAlgo::setComparator(unique_ptr<AbstractComparator>& c){
     comparator_ = move(c);
+}
+
+
+void CompareAlgo::initialize_comparators(  const CodeMap& codes  ) const{
+    comparator_->init( codes ); 
 }

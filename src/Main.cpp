@@ -132,7 +132,7 @@ int main(int ac, char* av[]){
     if(filter!=""){
         auto filters = split(filter,',');
         for(auto f: filters){
-            std::unique_ptr<AbstractTestFilter> filter = nullptr;
+            std::unique_ptr<AbstractFilter> filter = nullptr;
             FilterFactory::generate_filter(filter,f);
             if(filter!=nullptr){
                 std::cout<<"added filter: "<<f<<std::endl;
@@ -142,7 +142,7 @@ int main(int ac, char* av[]){
     }
     
     //load comparator
-    std::unique_ptr<AbstractTestComparator> comp = nullptr;
+    std::unique_ptr<AbstractComparator> comp = nullptr;
     ComparatorFactory::generate_comparator(comp,comparator);
     if(comp!=nullptr){
         std::cout<<"using comparator: "<<comparator<<std::endl;
@@ -158,7 +158,7 @@ int main(int ac, char* av[]){
     //comp_matrix.calculateComparisionMatrix(); 
     auto results = comp_matrix.get_sorted_matches();
     for(uint i = 0; i<15 and i<results.size();++i){
-        CodeMatch &m = results[i]; 
+        CodeMatch &m = results[i];
         std::cout<< m.group1<<" vs. "<<m.group2<<":\t"<<m.similarity
                  <<"\t"<<split(m.file1,'/').back()
                  <<" and "<<split(m.file2,'/').back() <<"\n";  

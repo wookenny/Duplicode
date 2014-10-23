@@ -22,12 +22,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractTestFilter.h"
+#include "AbstractFilter.h"
 
 #include <boost/algorithm/string.hpp>
 
 
-class FilterToLower : public AbstractTestFilter{
+class FilterToLower : public AbstractFilter{
 
      public:
         std::string operator()(const std::string& s) const {
