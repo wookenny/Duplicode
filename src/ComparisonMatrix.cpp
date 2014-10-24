@@ -25,6 +25,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <algorithm>
 #include <thread>
 #include <limits>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 static const int NUM_THREADS = std::thread::hardware_concurrency()*2;
 
@@ -258,5 +260,32 @@ void ComparisonMatrix::visual_diff(const std::string& s1, const std::string& s2)
     syscall+= " 2>&1 >/dev/null | grep 'something' &";
     //catch return value
     if(system(syscall.c_str())){};
+}
+
+void ComparisonMatrix::write_results_(std::ostream &os )
+{
+   
+    using boost::property_tree::ptree;
+    ptree pt;
+
+    std::vector<CodeMatch> matches = get_sorted_matches();     
+    int counter = 0;
+    for(auto & m: matches ) {
+        ptree & node = pt.add("comparision", ++counter);
+        node.put("similarity",  m.similarity);
+        node.put("group1",      m.group1);
+        node.put("group2",      m.group2);
+        node.put("file1",       m.file1);
+        node.put("file2",       m.file2);
+    }
+ 
+    write_xml( os, pt );
+}
+
+void ComparisonMatrix::write_results(std::string &file){
+    std::ofstream ofs;
+    ofs.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
+    write_results_(ofs);
+    ofs.close();
 }
 

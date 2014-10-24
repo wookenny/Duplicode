@@ -86,6 +86,8 @@ class ComparisonMatrix{
         double get_min(){ return min_;}
         void visual_diff(const std::string&, const std::string&);
    
+
+        void write_results(std::string &);
     private:
         std::unordered_map<std::string,std::vector<CodeFile>> codeFiles_;
         std::unique_ptr<CompareAlgo> comparator_;
@@ -94,15 +96,18 @@ class ComparisonMatrix{
         
 
         std::unordered_map<std::string,std::unordered_map<std::string,Similarity>> comparisonResult_;
-        std::vector<std::tuple<std::string,std::string>> pairs_;
-       
+        std::vector<std::tuple<std::string,std::string>> pairs_;       
+        double max_;
+        double min_;
         MultipleFileComp comp_mode_ = SingleBestMatch;        
+        
+        
         double compare_groups_(const std::vector<CodeFile>& g1,
                               const std::vector<CodeFile>& g2,
                               std::string *hint1 = nullptr,
                               std::string *hint2 = nullptr ) const;       
                               
         void compute_via_thread_(int tid);
-        double max_;
-        double min_;
+        void write_results_(std::ostream &);
+
 };

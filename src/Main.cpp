@@ -51,7 +51,7 @@ void display_matrix(ComparisonMatrix &matrix);
 
 int main(int ac, char* av[]){
     QApplication app(ac, av);
-    string root,suffixes, filter, comparator, ignore, filenames;
+    string root,suffixes, filter, comparator, ignore, filenames, outfile;
 
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -75,6 +75,8 @@ int main(int ac, char* av[]){
     ("list,l", "ignore all other argumtents and give a list of available "
     "filters and comparators.")
     ("show,s", "use a visual difftool to show the best machtes.")
+    ("output,o", po::value<string>(&outfile),
+                 "write the matches to the given file.")
     ("matrix,m", "display the resutls as a heatmap. A left click displays the folders"
     " and the value of the similarity, a right click opens a tool to inspect both files for a match. ")
     ;
@@ -163,6 +165,7 @@ int main(int ac, char* av[]){
                  <<"\t"<<split(m.file1,'/').back()
                  <<" and "<<split(m.file2,'/').back() <<"\n";  
     }
+    
     //print statistics
     if(results.size()>0){
         double max = results.front().similarity;
@@ -176,6 +179,12 @@ int main(int ac, char* av[]){
                  <<max<<"\tavg: "<<avg<<std::endl;
     }
     std::cout<<std::endl;
+    
+    //write file:
+     if(vm.count("output")){
+        comp_matrix.write_results(outfile);
+        std::cout<<"written results to: "<<outfile<<std::endl;
+     }
     
     if(results.size()>0 and vm.count("show")){
          std::cout<<"using visual difftool to view findings"<<std::endl;
