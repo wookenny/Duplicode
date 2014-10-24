@@ -272,17 +272,19 @@ void ComparisonMatrix::write_results_(std::ostream &os )
     std::vector<CodeMatch> matches = get_sorted_matches();     
     int counter = 0;
    
+    ptree root_node;
     for(auto & m: matches ) {
         ptree node;
-        node.put("<xmlattr>.Name", counter++);
+        node.put("<xmlattr>.name", ++counter);
         node.put("similarity",  m.similarity);
         node.put("group1",      m.group1);
         node.put("group2",      m.group2);
         node.put("file1",       m.file1);
         node.put("file2",       m.file2);
-        pt.add_child("Comparison",node);
+        root_node.add_child("comparison",node);
     }
- 
+    pt.add_child("Comparisions",root_node);
+     
     boost::property_tree::xml_writer_settings<char> settings('\t', 1);
     write_xml( os, pt,  settings);
 
