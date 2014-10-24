@@ -43,7 +43,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
      setLayout(mainLayout);
      setWindowTitle(tr("Similarity Matrix"));
      
-     connect(view, SIGNAL(view_clicked()()), this, SLOT(slotSetBottomText()));
+     connect(view, SIGNAL(view_clicked()), this, SLOT(slotSetBottomText()));
  }
 
 
