@@ -28,6 +28,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+
 static const int NUM_THREADS = std::thread::hardware_concurrency()*2;
 
 std::string get_group(const std::string &s){ 
@@ -270,16 +271,21 @@ void ComparisonMatrix::write_results_(std::ostream &os )
 
     std::vector<CodeMatch> matches = get_sorted_matches();     
     int counter = 0;
+   
     for(auto & m: matches ) {
-        ptree & node = pt.add("comparision", ++counter);
+        ptree node;
+        node.put("<xmlattr>.Name", counter++);
         node.put("similarity",  m.similarity);
         node.put("group1",      m.group1);
         node.put("group2",      m.group2);
         node.put("file1",       m.file1);
         node.put("file2",       m.file2);
+        pt.add_child("Comparison",node);
     }
  
-    write_xml( os, pt );
+    boost::property_tree::xml_writer_settings<char> settings('\t', 1);
+    write_xml( os, pt,  settings);
+
 }
 
 void ComparisonMatrix::write_results(std::string &file){
