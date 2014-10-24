@@ -25,7 +25,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "ComparisonMatrix.h"
 #include "ComparatorFactory.h"
 #include "Common.h"
-#include "window.h"
+#include "MatrixWindow.h"
 
 
 #include <string>
@@ -202,7 +202,7 @@ int main(int ac, char* av[]){
     
     
     if(results.size()>0 and vm.count("matrix")){
-        Window *w = new Window(comp_matrix);
+        MatrixWindow *w = new MatrixWindow(comp_matrix);
         w->show();
         app.exec();
     }

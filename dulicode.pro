@@ -12,8 +12,8 @@ HEADERS       = src/AbstractComparator.h \
                 src/FilterDeleteComments.h \
                 src/FilterFactory.h \
                 src/magic.h \
-                src/renderarea.h \
-                src/window.h \
+                src/ComparisionView.h \
+                src/MatrixWindow.h \
                 src/ComparatorDiffLib.hpp \
                 src/ComparatorIdentical.hpp \
                 src/FilterDelete.hpp \
@@ -33,8 +33,8 @@ SOURCES       = src/Common.cpp  \
                 src/FilterDeleteComments.cpp \
                 src/FilterFactory.cpp \
                 src/Main.cpp \
-                src/renderarea.cpp \
-                src/window.cpp
+                src/ComparisionView.cpp \
+                src/MatrixWindow.cpp
 
 INCLUDEPATH += /usr/include/boost/
 LIBS += -L/usr/lib64/ -lboost_regex -lboost_iostreams -lboost_filesystem -lboost_system -lboost_program_options -l:libmagic.so.1
