@@ -35,6 +35,8 @@ class FilterToLower : public AbstractFilter{
             boost::algorithm::to_lower(copy);
             return copy;
         } 
-        const std::string name = "Filter:TextToLower"; 
+
+        std::string name() const{ return "ToLower";}
+        std::string description() const{ return "changes every character to lower case.";}
 };
 

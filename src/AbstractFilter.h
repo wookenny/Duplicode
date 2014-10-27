@@ -28,6 +28,8 @@ class AbstractFilter{
     
     public:
         virtual std::string operator()(const std::string&) const = 0; 
-        const std::string name = "Filter:Abstract"; 
+        
+        virtual std::string name()        const = 0;
+        virtual std::string description() const = 0;
 };
 

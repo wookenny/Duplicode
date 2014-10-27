@@ -54,7 +54,7 @@ std::vector<std::tuple<std::string,std::string>> ComparatorFactory::comparatorde
     std::vector<std::tuple<std::string,std::string>> desc;
     for(const auto &kv: map){
         std::unique_ptr<AbstractComparator> comp{ map[kv.first]() };
-        desc.push_back( std::make_tuple( kv.first,comp->name() ) );
+        desc.push_back( std::make_tuple( kv.first,comp->description() ) );
     }
     return desc;       
 }

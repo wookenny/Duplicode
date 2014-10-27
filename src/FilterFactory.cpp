@@ -22,6 +22,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #include "FilterFactory.h"
+#include "Common.h"
+
+//Further Filters can be added like this:
+// * include the needed header
+// * add the name and the class to the map below
+//
+// important: implement  name() and description() method properly
 
 #include "FilterDeleteComments.h"
 #include "FilterDeleteWhitespace.hpp"
@@ -29,57 +36,52 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "FilterIdentity.hpp"
 #include "FilterToLower.hpp"
 
-void FilterFactory::generate_filter(std::unique_ptr<AbstractFilter> &filter,
+std::map<std::string, AbstractFilter*(*)()> FilterFactory::map = 
+{
+ {FilterDeleteComments().name(),   &createInstance<FilterDeleteComments>},
+ {FilterDeleteWhitespace().name(), &createInstance<FilterDeleteWhitespace>},
+ {FilterDelete().name(),           &createInstance<FilterDelete>},
+ {FilterIdentity().name(),         &createInstance<FilterIdentity>},
+ {FilterToLower().name(),          &createInstance<FilterToLower>}
+};
+
+/* ---------------------  HINT!! ----------------------------------
+  Generic part below, no modification for new comparators needed!
+-------------------------------------------------------------------*/
+
+void FilterFactory::generate_filter(std::unique_ptr<AbstractFilter> &comp,
                                     const std::string& f)
 {
-    if(f=="DeleteComments"){
-        std::unique_ptr<AbstractFilter> f{new FilterDeleteComments()};
-        filter = std::move(f);
-        return;
-    }
-    if(f=="DeleteAll"){
-        std::unique_ptr<AbstractFilter> f{new FilterDelete()};
-        filter = std::move(f);
-        return;
-    }
-     if(f=="DeleteWhitespace"){
-        std::unique_ptr<AbstractFilter> f{new FilterDeleteWhitespace()};
-        filter = std::move(f);
-        return;
-    }
-    if(f=="Identity"){
-        std::unique_ptr<AbstractFilter> f{new FilterIdentity()};
-        filter = std::move(f);
-        return;
-    }
-    if(f=="ToLower"){
-        std::unique_ptr<AbstractFilter> f{new FilterToLower()};
-        filter = std::move(f);
-        return;
-    }    
+    std::string c = fuzzy_match(f, filter_list());       
+    std::unique_ptr<AbstractFilter> co{ map[c]() };
+    comp = std::move(co);
     return;
 }
    
+
 std::vector<std::string> FilterFactory::filter_list(){
-    return {"DeleteComments",
-            "DeleteAll",
-            "DeleteWhitespace",
-            "Identity",
-            "ToLower"};
+    std::vector<std::string> list;
+    for(const auto &kv: map)
+        list.push_back(kv.first);
+    return list;
 }
-   
-   
+     
+
 std::vector<std::tuple<std::string,std::string>> FilterFactory::filterdescription_list()
 {
     std::vector<std::tuple<std::string,std::string>> desc;
-    desc.push_back(std::make_tuple("DeleteComments",
-                            "deletes comments like '\\\\' and '\\*.. *\\'."));
-    desc.push_back(std::make_tuple("DeleteAll","deletes complete code."));
-    desc.push_back(std::make_tuple("DeleteWhitespace","deletes all whitespace."));
-    desc.push_back(std::make_tuple("Identity", "does not change the code.")); 
-    desc.push_back(std::make_tuple("ToLower", "changes every character to lower case."));   
-           
+    for(const auto &kv: map){
+        std::unique_ptr<AbstractFilter> comp{ map[kv.first]() };
+        desc.push_back( std::make_tuple( kv.first,comp->description() ) );
+    }
     return desc;       
 }
+
+    
+
+
+
+
+
 
 

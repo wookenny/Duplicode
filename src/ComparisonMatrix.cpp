@@ -50,7 +50,7 @@ void ComparisonMatrix::addCodes(std::vector<std::string> &codes){
     }
     comparisonResult_.clear() ;
     calculated_ = false;
-    std::cout<<"Collected "<<codes.size()<<" files"<<std::endl;
+    //std::cout<<"Collected "<<codes.size()<<" files"<<std::endl;
 }
 
 void ComparisonMatrix::compute_via_thread_(int tid) {
@@ -93,7 +93,7 @@ void ComparisonMatrix::calculateComparisionMatrix(){
 
     std::cout<<"groups: "<<keys.size()<<"\t#of comparisons: "
                                       <<pairs_.size()<<"\n";
-    std::cout<<"using "<<NUM_THREADS<<" threads for processing" <<std::endl;
+    //std::cout<<"using "<<NUM_THREADS<<" threads for processing" <<std::endl;
 
     std::vector<std::thread> t;
     for (int i = 0; i < NUM_THREADS; ++i) {

@@ -97,15 +97,15 @@ int main(int ac, char* av[]){
         po::notify(vm);
     }catch(const boost::program_options::required_option& e){
 
-        cout << "Required argument missing: "<< e.what()<<"\n";
+        cout << "required argument missing: "<< e.what()<<"\n";
         cout << desc << "\n";
         return 0;
     }catch(const boost::program_options::error& e ) {
-        cout << "Error: "<< e.what()<<"\n";
+        cout << "error: "<< e.what()<<"\n";
         cout << desc << "\n";
         return 0;
     }catch(...){
-        cout << "Usage:"<<std::boolalpha<< "\n";
+        cout << "usage:"<<std::boolalpha<< "\n";
         cout << desc << "\n";
         return 0;
     }
@@ -131,17 +131,20 @@ int main(int ac, char* av[]){
     }    
     ComparisonMatrix comp_matrix(root);
     comp_matrix.addCodes(files);    
+    std::cout<<"filter(s): ";
     if(filter!=""){
         auto filters = split(filter,',');
+        
         for(auto f: filters){
             std::unique_ptr<AbstractFilter> filter = nullptr;
             FilterFactory::generate_filter(filter,f);
             if(filter!=nullptr){
-                std::cout<<"added filter: "<<f<<std::endl;
+                std::cout<<filter->name()<<", ";
                 comp_matrix.addFilter(filter);
             }
         }
     }
+    std::cout<<"\t";
     
     //load comparator
     std::unique_ptr<AbstractComparator> comp = nullptr;
@@ -149,12 +152,11 @@ int main(int ac, char* av[]){
     assert(comp!=nullptr);
     std::cout<< "comparator: "<<(comp->name()) <<std::endl;
     comp_matrix.setComparator(comp);
-
+    std::cout<<"\n";
     
-    
-    //comp_matrix.print_files();
-    //comp_matrix.calculateComparisionMatrix(); 
+    //calculated similarites
     auto results = comp_matrix.get_sorted_matches();
+    std::cout<<"\nresults:"<<std::endl;
     for(uint i = 0; i<15 and i<results.size();++i){
         CodeMatch &m = results[i];
         std::cout<< m.group1<<" vs. "<<m.group2<<":\t"<<m.similarity
@@ -174,7 +176,6 @@ int main(int ac, char* av[]){
         std::cout<<"min: "<<min<<"\tmedian: "<<median<<"\tmax: "
                  <<max<<"\tavg: "<<avg<<std::endl;
     }
-    std::cout<<std::endl;
     
     //write file:
      if(vm.count("output")){
@@ -187,13 +188,13 @@ int main(int ac, char* av[]){
          std::string difftool = find_difftool();
          for(uint i = 0;i<results.size();++i){
             CodeMatch &m = results[i];
-            std::cout<<"Comparing: '"<<m.group1<<"' '"<<m.group2<<"'  (";
+            std::cout<<"comparing: '"<<m.group1<<"' '"<<m.group2<<"'  (";
             std::cout<<m.similarity<<")"<<std::endl;
-            std::cout<<"Launch '"<<difftool<<"' [Y/n]"<<std::endl;
+            std::cout<<"launch '"<<difftool<<"' [Y/n]"<<std::endl;
             std::string answer; 
             std::cin >> answer;
             if(answer=="n" or answer=="N"){
-                std::cout<<"Quit."<<std::endl;
+                std::cout<<"quit."<<std::endl;
                 break;
             }
             std::string syscall = difftool;

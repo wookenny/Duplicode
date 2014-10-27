@@ -27,14 +27,19 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <string>
 #include <tuple>
 #include <vector>
-
+#include <map>
 #include "AbstractFilter.h"
 
-namespace FilterFactory{
+class FilterFactory{
+    public: 
+        template<typename T> 
+        static AbstractFilter * createInstance() { return new T; } 
+        static std::vector<std::string> filter_list();
+        static std::vector<std::tuple<std::string,std::string>> filterdescription_list();
+        static void generate_filter(std::unique_ptr<AbstractFilter> &filter,
+                                                            const std::string &f);
 
-   void generate_filter(std::unique_ptr<AbstractFilter> &filter,
-                        const std::string &f);
-   std::vector<std::string> filter_list();
-   std::vector<std::tuple<std::string,std::string>> filterdescription_list();
+    private:
+        static std::map<std::string, AbstractFilter*(*)()> map;
 
-}
+};

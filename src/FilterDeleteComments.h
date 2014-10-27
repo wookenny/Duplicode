@@ -29,5 +29,7 @@ class FilterDeleteComments : public AbstractFilter{
 
      public:
         std::string operator()(const std::string& s) const;
-        const std::string name = "Filter:DeleteComments"; 
+
+        std::string name() const{ return "DeleteComments";}
+        std::string description() const{ return "deletes comments like '\\\\' and '\\*.. *\\'.";}
 };

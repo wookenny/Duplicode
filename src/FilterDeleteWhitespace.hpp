@@ -34,5 +34,7 @@ class FilterDeleteWhitespace : public AbstractFilter{
             std::string copy = boost::regex_replace(s, expr, "");
             return copy;
         };
-        const std::string name = "Filter:DeleteWhitespace"; 
+
+        std::string name() const{ return "DeleteWhitespace";}
+        std::string description() const{ return "deletes all whitespace.";}
 };

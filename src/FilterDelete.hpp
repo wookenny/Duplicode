@@ -27,6 +27,8 @@ class FilterDelete : public AbstractFilter{
 
      public:
         std::string operator()(const std::string& ) const {return "";} 
-        const std::string name = "Filter:DeleteAllText"; 
+
+        std::string name() const{ return "DeleteAll";}
+        std::string description() const{ return "deletes complete code.";}
 };
 
