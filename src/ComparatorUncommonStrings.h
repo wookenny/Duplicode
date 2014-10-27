@@ -37,7 +37,7 @@ class ComparatorUncommonStrings : public AbstractComparator{
             return "UncommonStrings";
         }
 
-       static std::string description() {
+        std::string description() const{
             return "counts the number of strings used in both files "
                     " but no other group. Strings might appear"
                     " in other files of both groups.";

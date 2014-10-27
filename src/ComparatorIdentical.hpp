@@ -35,7 +35,7 @@ class ComparatorIdentical : public AbstractComparator{
             return "Identical";
         }
 
-       static std::string description() {
+        std::string description() const{
             return "checks whether two files are identical.";
         }
 }; 

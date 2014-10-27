@@ -1,82 +1,62 @@
 #include "ComparatorFactory.h"
 
+//Further Compators can be added like this:
+// * include the needed header
+// * add the name and the class to the map below
+// e.g.,   {"MyComp", &createInstance<MyComparator>},
+//
+// important: implement  name() and description() method properly
+
 
 #include "ComparatorDiffLib.hpp"
 #include "ComparatorIdentical.hpp"
 #include "ComparatorLongestMatch.h"
 #include "ComparatorLevenshteinDistance.h"
 #include "ComparatorUncommonStrings.h"
-//TODO: add a function to map substrings to comparator if only one comp. is matching
+
+std::map<std::string, AbstractComparator*(*)()> ComparatorFactory::map = 
+{
+    {"DiffLib",         &createInstance<ComparatorDiffLib>},
+    {"Identical",       &createInstance<ComparatorIdentical>},
+    {"LongestMatch",    &createInstance<ComparatorLongestMatch>},
+    {"Levenshtein",     &createInstance<ComparatorLevenshteinDistance>},
+    {"UncommonStrings", &createInstance<ComparatorUncommonStrings>}
+};
+
+/* ---------------------  HINT!! ----------------------------------
+  Generic part below, no modification for new comparators needed!
+-------------------------------------------------------------------*/
 
 void ComparatorFactory::generate_comparator(std::unique_ptr<AbstractComparator> &comp,
                                     const std::string& f)
 {
     std::string c;
     if (f=="")
-        c=="DiffLib";
+        c==map.begin()->first;
     else
         c = fuzzy_match(f, comparator_list());
-
-    if(c=="Identical"){
-        std::unique_ptr<AbstractComparator> c{new ComparatorIdentical()};
-        comp = std::move(c);
-        return;
-    }
-    if(c=="LongestMatch"){
-        std::unique_ptr<AbstractComparator> c{new ComparatorLongestMatch()};
-        comp = std::move(c);
-        return;
-    }
-    if(c=="DiffLib"){
-        std::unique_ptr<AbstractComparator> c{new ComparatorDiffLib()};
-        comp = std::move(c);
-        return;
-    }
-    if(c=="Levenshtein"){
-        std::unique_ptr<AbstractComparator> c{new ComparatorLevenshteinDistance()};
-        comp = std::move(c);
-        return; 
-    }
-    if(c=="UncommonStrings"){
-        std::unique_ptr<AbstractComparator> c{new ComparatorUncommonStrings()};
-        comp = std::move(c);
-        return; 
-    }
+           
+    std::unique_ptr<AbstractComparator> co{ map[c]() };
+    comp = std::move(co);
     return;
+
+
 }
-   
+    
 std::vector<std::string> ComparatorFactory::comparator_list(){
-    return {
-            "Identical",    
-            "LongestMatch",
-            "DiffLib",
-            "Levenshtein",
-            "UncommonStrings"
-            };
+    std::vector<std::string> list;
+    for(const auto &kv: map)
+        list.push_back(kv.first);
+    return list;
 }
    
 std::vector<std::tuple<std::string,std::string>> ComparatorFactory::comparatordescription_list()
 {
     std::vector<std::tuple<std::string,std::string>> desc;
-    desc.push_back(std::make_tuple(
-                    "Identical",
-                    "checks whether two files are identical."));
-    desc.push_back(std::make_tuple(
-                    "LongestMatch",
-                    "finds the longest common sequence in two files."));
-    desc.push_back(std::make_tuple(
-                    "DiffLib",
-                    "uses a method similar to Pythons Difflib to measure"
-                    " the difference between two files."));
-    desc.push_back(std::make_tuple(
-                    "Levenshtein",
-                    "calculates the Levenshtein distance between two files.")); 
-     desc.push_back(std::make_tuple(
-                    "UncommonStrings",
-                    "counts the number of strings used in both files "
-                    " but no other group. Strings might appear"
-                    " in other files of both groups."));                      
-           
+    for(const auto &kv: map){
+        std::unique_ptr<AbstractComparator> comp{ map[kv.first]() };
+        desc.push_back( std::make_tuple( kv.first,comp->name() ) );
+    }
     return desc;       
 }
 

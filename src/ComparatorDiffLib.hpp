@@ -39,7 +39,7 @@ class ComparatorDiffLib : public AbstractComparator{
             return "DiffLib";
         }
 
-       static std::string description() {
+       std::string description() const {
             return "uses a method similar to Pythons Difflib to measure the difference between two files.";
         }
        

@@ -36,5 +36,6 @@ class AbstractComparator{
         virtual double operator()(const std::string&, const std::string&) const = 0;
         virtual void init(const CodeMap& ) {/* not always needed */}
         
-        virtual std::string name() const =0;
+        virtual std::string name()        const =0;
+        virtual std::string description() const =0;
 }; 

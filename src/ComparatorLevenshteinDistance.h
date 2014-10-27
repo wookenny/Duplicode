@@ -36,7 +36,7 @@ public:
             return "LevenshteinDistance";
         }
 
-       static std::string description() {
+        std::string description() const{
             return "calculates the Levenshtein distance between two files.";
         }
 

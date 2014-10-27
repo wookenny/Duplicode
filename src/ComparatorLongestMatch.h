@@ -35,7 +35,7 @@ public:
             return "LongestMatch";
         }
 
-       static std::string description() {
+        std::string description() const {
             return "finds the longest common sequence in two files.";
         }
         

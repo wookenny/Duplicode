@@ -27,13 +27,19 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <string>
 #include <tuple>
 #include <vector>
-
+#include <map>
 #include "AbstractComparator.h"
 
-namespace ComparatorFactory{
+class ComparatorFactory{
+    public: 
+        template<typename T> 
+        static AbstractComparator * createInstance() { return new T; } 
+        static std::vector<std::string> comparator_list();
+        static std::vector<std::tuple<std::string,std::string>> comparatordescription_list();
+        static void generate_comparator(std::unique_ptr<AbstractComparator> &comp,
+                                                      const std::string &f);
 
-   void generate_comparator(std::unique_ptr<AbstractComparator> &comp,
-                        const std::string &f);
-   std::vector<std::string> comparator_list();
-   std::vector<std::tuple<std::string,std::string>> comparatordescription_list();
-}
+    private:
+        static std::map<std::string, AbstractComparator*(*)()> map;
+
+};
