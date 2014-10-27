@@ -11,27 +11,33 @@
 void ComparatorFactory::generate_comparator(std::unique_ptr<AbstractComparator> &comp,
                                     const std::string& f)
 {
-    if(f=="Identical"){
+    std::string c;
+    if (f=="")
+        c=="DiffLib";
+    else
+        c = fuzzy_match(f, comparator_list());
+
+    if(c=="Identical"){
         std::unique_ptr<AbstractComparator> c{new ComparatorIdentical()};
         comp = std::move(c);
         return;
     }
-    if(f=="LongestMatch"){
+    if(c=="LongestMatch"){
         std::unique_ptr<AbstractComparator> c{new ComparatorLongestMatch()};
         comp = std::move(c);
         return;
     }
-    if(f=="DiffLib"){
+    if(c=="DiffLib"){
         std::unique_ptr<AbstractComparator> c{new ComparatorDiffLib()};
         comp = std::move(c);
         return;
     }
-    if(f=="Levenshtein"){
+    if(c=="Levenshtein"){
         std::unique_ptr<AbstractComparator> c{new ComparatorLevenshteinDistance()};
         comp = std::move(c);
         return; 
     }
-    if(f=="UncommonStrings"){
+    if(c=="UncommonStrings"){
         std::unique_ptr<AbstractComparator> c{new ComparatorUncommonStrings()};
         comp = std::move(c);
         return; 

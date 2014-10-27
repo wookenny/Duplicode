@@ -25,40 +25,17 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <vector>
 using namespace std;
 
-uint ComparatorLevenshteinDistance::levenshteinDistance(const string &s1, 
-                                                      const string &s2) const
+double ComparatorLevenshteinDistance::operator()
+            (const std::string& c1, const std::string& c2) const
 {
-  const uint m(s1.size());
-  const uint n(s2.size());
- 
-  if( m==0 ) return n;
-  if( n==0 ) return m;
- 
-  vector<uint> costs(n + 1, 0);
- 
-  uint i = 0;
-  for ( std::string::const_iterator it1 = s1.begin(); it1 != s1.end(); ++it1, ++i )
-  {
-    costs[0] = i+1;
-    uint corner = i;
- 
-    uint j = 0;
-    for ( std::string::const_iterator it2 = s2.begin(); it2 != s2.end(); ++it2, ++j )
-    {
-      uint upper = costs[j+1];
-      if( *it1 == *it2 )
-      {
-		  costs[j+1] = corner;
-	  }
-      else
-	  {
-		uint t(upper<corner?upper:corner);
-        costs[j+1] = (costs[j]<t?costs[j]:t)+1;
-	  }
- 
-      corner = upper;
-    }
-  }
- 
-  return costs[n];
+    uint dist = 0;
+    if(c1.size() >= c2.size())
+        dist = levenshtein_distance(c1,c2);
+    else 
+        dist = levenshtein_distance(c2,c1);
+    double n = std::min(c1.size(),c2.size());
+    double N = std::max(c1.size(),c2.size());       
+    double sim = (dist-(N-n))/std::max(1.0*dist,1.);
+
+    return std::max(sim,0.);            
 }

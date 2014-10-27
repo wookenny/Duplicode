@@ -30,7 +30,15 @@ class ComparatorLongestMatch : public AbstractComparator{
  
 public:
         double operator()(const std::string& c1, const std::string& c2) const;
+        
+        std::string name() const{
+            return "LongestMatch";
+        }
 
+       static std::string description() {
+            return "finds the longest common sequence in two files.";
+        }
+        
 private:
        double sizeOfMatch(const std::string&, uint,
                           const std::string&, uint) const;

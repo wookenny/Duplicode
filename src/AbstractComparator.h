@@ -25,6 +25,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <string>
 
 #include "CodeFile.hpp"
 
@@ -33,6 +34,7 @@ typedef std::unordered_map<std::string,std::vector<CodeFile>> CodeMap;
 class AbstractComparator{
     public:
         virtual double operator()(const std::string&, const std::string&) const = 0;
-        virtual void init(const CodeMap& ) {}
-       
+        virtual void init(const CodeMap& ) {/* not always needed */}
+        
+        virtual std::string name() const =0;
 }; 

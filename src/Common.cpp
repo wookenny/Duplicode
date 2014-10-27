@@ -25,6 +25,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <sstream>
 #include <algorithm>
 #include <boost/regex.hpp>
+#include <limits>
 #include "magic.h"
 namespace fs = boost::filesystem;
 using namespace std;
@@ -156,5 +157,58 @@ std::string find_difftool(){
     }
     return "";
 }
+
+uint levenshtein_distance(const std::string &s1, const std::string &s2)
+{
+  const uint m(s1.size());
+  const uint n(s2.size());
+ 
+  if( m==0 ) return n;
+  if( n==0 ) return m;
+ 
+  vector<uint> costs(n + 1, 0);
+ 
+  uint i = 0;
+  for ( std::string::const_iterator it1 = s1.begin(); it1 != s1.end(); ++it1, ++i )
+  {
+    costs[0] = i+1;
+    uint corner = i;
+ 
+    uint j = 0;
+    for ( std::string::const_iterator it2 = s2.begin(); it2 != s2.end(); ++it2, ++j )
+    {
+      uint upper = costs[j+1];
+      if( *it1 == *it2 )
+      {
+		  costs[j+1] = corner;
+	  }
+      else
+	  {
+		uint t(upper<corner?upper:corner);
+        costs[j+1] = (costs[j]<t?costs[j]:t)+1;
+	  }
+ 
+      corner = upper;
+    }
+  }
+ 
+  return costs[n];
+}
+
+std::string fuzzy_match(const std::string& s,const std::vector<std::string>& list){
+    int edit_dist = std::numeric_limits<int>::max();
+    std::string match = s;
+    for(const auto &l: list){
+        int d = levenshtein_distance(l,s);
+        int diff = l.size() - s.size();
+        if(diff>0) d-= diff;
+        if(d < edit_dist){
+            edit_dist = d;
+            match = l;
+        }
+    }
+    return match;
+}
+
 
 

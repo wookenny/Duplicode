@@ -30,4 +30,12 @@ class ComparatorIdentical : public AbstractComparator{
         double operator()(const std::string& c1, const std::string& c2) const{
             return (c1==c2)?1.:0.;
         } 
+        
+        std::string name() const{
+            return "Identical";
+        }
+
+       static std::string description() {
+            return "checks whether two files are identical.";
+        }
 }; 

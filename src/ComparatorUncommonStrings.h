@@ -33,6 +33,16 @@ class ComparatorUncommonStrings : public AbstractComparator{
         double operator()(const std::string& c1, const std::string& c2) const;
         void init( const CodeMap& codes);
         
+        std::string name() const{
+            return "UncommonStrings";
+        }
+
+       static std::string description() {
+            return "counts the number of strings used in both files "
+                    " but no other group. Strings might appear"
+                    " in other files of both groups.";
+        }
+        
     private:
         //dict of words used by at most two groups
         std::set<std::string> uncommon_strings_;

@@ -34,4 +34,14 @@ class ComparatorDiffLib : public AbstractComparator{
             auto matcher = difflib::MakeSequenceMatcher(c1, c2);
             return matcher.ratio();
         } 
+        
+       std::string name() const{
+            return "DiffLib";
+        }
+
+       static std::string description() {
+            return "uses a method similar to Pythons Difflib to measure the difference between two files.";
+        }
+       
 }; 
+

@@ -26,25 +26,18 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <string>
 #include <cmath>
 #include <iostream>
-
+#include "Common.h"
 class ComparatorLevenshteinDistance : public AbstractComparator{
  
 public:
-        double operator()(const std::string& c1, const std::string& c2) const{
+        double operator()(const std::string& c1, const std::string& c2) const;
 
-            uint dist = 0;
-            if(c1.size() >= c2.size())
-                dist = levenshteinDistance(c1,c2);
-            else 
-                dist = levenshteinDistance(c2,c1);
-            double n = std::min(c1.size(),c2.size());
-            double N = std::max(c1.size(),c2.size());       
-            double sim = (dist-(N-n))/std::max(1.0*dist,1.);
-
-            return std::max(sim,0.);            
+        std::string name() const{
+            return "LevenshteinDistance";
         }
 
-private:
-       uint levenshteinDistance(const std::string&,
-                                  const std::string&) const;
+       static std::string description() {
+            return "calculates the Levenshtein distance between two files.";
+        }
+
 }; 

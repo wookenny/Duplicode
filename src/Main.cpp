@@ -146,15 +146,11 @@ int main(int ac, char* av[]){
     //load comparator
     std::unique_ptr<AbstractComparator> comp = nullptr;
     ComparatorFactory::generate_comparator(comp,comparator);
-    if(comp!=nullptr){
-        std::cout<<"using comparator: "<<comparator<<std::endl;
-        comp_matrix.setComparator(comp);
-    }else{//load difflib
-        ComparatorFactory::generate_comparator(comp,"DiffLib");
-        assert(comp!=nullptr);
-        comp_matrix.setComparator(comp);
-    }   
+    assert(comp!=nullptr);
+    std::cout<< "comparator: "<<(comp->name()) <<std::endl;
+    comp_matrix.setComparator(comp);
 
+    
     
     //comp_matrix.print_files();
     //comp_matrix.calculateComparisionMatrix(); 
