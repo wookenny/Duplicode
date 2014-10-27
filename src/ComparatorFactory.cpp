@@ -3,7 +3,6 @@
 //Further Compators can be added like this:
 // * include the needed header
 // * add the name and the class to the map below
-// e.g.,   {"MyComp", &createInstance<MyComparator>},
 //
 // important: implement  name() and description() method properly
 
@@ -16,11 +15,11 @@
 
 std::map<std::string, AbstractComparator*(*)()> ComparatorFactory::map = 
 {
-    {"DiffLib",         &createInstance<ComparatorDiffLib>},
-    {"Identical",       &createInstance<ComparatorIdentical>},
-    {"LongestMatch",    &createInstance<ComparatorLongestMatch>},
-    {"Levenshtein",     &createInstance<ComparatorLevenshteinDistance>},
-    {"UncommonStrings", &createInstance<ComparatorUncommonStrings>}
+ {ComparatorDiffLib().name(),             &createInstance<ComparatorDiffLib>},
+ {ComparatorIdentical().name(),           &createInstance<ComparatorIdentical>},
+ {ComparatorLongestMatch().name(),        &createInstance<ComparatorLongestMatch>},
+ {ComparatorLevenshteinDistance().name(), &createInstance<ComparatorLevenshteinDistance>},
+ {ComparatorUncommonStrings().name(),     &createInstance<ComparatorUncommonStrings>}
 };
 
 /* ---------------------  HINT!! ----------------------------------
