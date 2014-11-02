@@ -50,7 +50,7 @@ void print_filter_comparators();
 void display_matrix(ComparisonMatrix &matrix);
 
 int main(int ac, char* av[]){
-    QApplication app(ac, av);
+
     string root,suffixes, filter, comparator, ignore, filenames, outfile;
 
     po::options_description desc("Allowed options");
@@ -208,6 +208,7 @@ int main(int ac, char* av[]){
     
     
     if(results.size()>0 and vm.count("matrix")){
+        QApplication app(ac, av);
         MatrixWindow *w = new MatrixWindow(comp_matrix);
         w->show();
         app.exec();
