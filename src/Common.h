@@ -45,6 +45,7 @@ std::vector<std::string> split(const std::string&, char);
 
 
 bool is_source(const std::string &file);
+bool is_ascii_text(const std::string &file);
 bool file_in_list(const std::string &name, const std::string &list); 
 std::string find_difftool();
 uint levenshtein_distance(const std::string &s1, const std::string &s2);

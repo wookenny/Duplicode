@@ -128,7 +128,8 @@ int main(int ac, char* av[]){
         files  = collect_files_by_names(root, filenames);
     }else{ 
         files = collect_files(root, suffixes, ignore);
-    }    
+    }   
+    std::cout<<"total files found: "<<files.size() <<std::endl; 
     ComparisonMatrix comp_matrix(root);
     comp_matrix.addCodes(files);    
     std::cout<<"filter(s): ";

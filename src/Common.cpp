@@ -97,7 +97,7 @@ std::vector<boost::filesystem::path> get_all_source_files(const fs::path& root,
         fs::recursive_directory_iterator it(root);
         fs::recursive_directory_iterator endit;
         while(it != endit){
-            if (fs::is_regular_file(*it) and is_source(it->path().string())  
+            if (fs::is_regular_file(*it) and is_ascii_text(it->path().string())  
                                                 and not fs::is_directory(*it)){
                 if(not file_in_list(it->path().filename().string(),ignore)) 
                     files.push_back(it->path());
@@ -135,6 +135,13 @@ bool is_source(const std::string &file){
      return (type.find("source")!=std::string::npos);
 }     
 
+bool is_ascii_text(const std::string &file){
+     magic_t myt = magic_open(MAGIC_CONTINUE|MAGIC_ERROR/*|MAGIC_DEBUG*/);
+     magic_load(myt,NULL);
+     std::string type = magic_file(myt,file.c_str());
+     magic_close(myt);
+     return (type.find("ASCII text")!=std::string::npos);
+}
 
 bool file_in_list(const std::string &name, const std::string &list){
     auto file_list  = split(list, ',');  
