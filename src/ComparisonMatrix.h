@@ -88,12 +88,14 @@ class ComparisonMatrix{
    
 
         void write_results(std::string &);
+        void verbose(bool b){verbose_ = b;}
+        
     private:
         std::unordered_map<std::string,std::vector<CodeFile>> codeFiles_;
         std::unique_ptr<CompareAlgo> comparator_;
         bool calculated_;
         std::string root_;
-        
+        bool verbose_ = false;
 
         std::unordered_map<std::string,std::unordered_map<std::string,Similarity>> comparisonResult_;
         std::vector<std::tuple<std::string,std::string>> pairs_;       

@@ -66,7 +66,7 @@ void ComparisonMatrix::compute_via_thread_(int tid) {
         simil.hint1 = hint1;
         simil.hint2 = hint2;                           
         comparisonResult_[group1][group2] = simil;   
-        if(tid==0){
+        if(tid==0 and verbose_){
             std::cout<<"\r "<<100*i/pairs_.size()<<"%  ";
             std::cout.flush();
         }
@@ -93,7 +93,6 @@ void ComparisonMatrix::calculateComparisionMatrix(){
 
     std::cout<<"groups: "<<keys.size()<<"\t#of comparisons: "
                                       <<pairs_.size()<<"\n";
-    //std::cout<<"using "<<NUM_THREADS<<" threads for processing" <<std::endl;
 
     std::vector<std::thread> t;
     for (int i = 0; i < NUM_THREADS; ++i) {
@@ -104,9 +103,7 @@ void ComparisonMatrix::calculateComparisionMatrix(){
         t[i].join();
     }
     
-    std::cout<<"\r  Done  "<<std::endl;
-    //std::cout<<"\r";
-    //std::cout<<"100 %        "<<std::endl;
+    if(verbose_) std::cout<<"\r  Done  "<<std::endl;
     
     //collect max/min
     for(const auto &i: comparisonResult_){

@@ -79,6 +79,7 @@ int main(int ac, char* av[]){
                  "write the matches to the given file.")
     ("matrix,m", "display the resutls as a heatmap. A left click displays the folders"
     " and the value of the similarity, a right click opens a tool to inspect both files for a match. ")
+    ("no_process,%", "hides the percentage of comparisons made.")
     ;
 
     if(ac==1){
@@ -153,6 +154,7 @@ int main(int ac, char* av[]){
     assert(comp!=nullptr);
     std::cout<< "comparator: "<<(comp->name()) <<std::endl;
     comp_matrix.setComparator(comp);
+    comp_matrix.verbose( not vm.count("no_process")> 0 );
     std::cout<<"\n";
     
     //calculated similarites
