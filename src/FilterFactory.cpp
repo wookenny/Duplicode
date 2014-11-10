@@ -35,6 +35,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "FilterDelete.hpp"
 #include "FilterIdentity.hpp"
 #include "FilterToLower.hpp"
+#include "FilterSplitStructure.hpp"
 
 std::map<std::string, AbstractFilter*(*)()> FilterFactory::map = 
 {
@@ -42,7 +43,8 @@ std::map<std::string, AbstractFilter*(*)()> FilterFactory::map =
  {FilterDeleteWhitespace().name(), &createInstance<FilterDeleteWhitespace>},
  {FilterDelete().name(),           &createInstance<FilterDelete>},
  {FilterIdentity().name(),         &createInstance<FilterIdentity>},
- {FilterToLower().name(),          &createInstance<FilterToLower>}
+ {FilterToLower().name(),          &createInstance<FilterToLower>},
+  {FilterSplitStructure().name(),  &createInstance<FilterSplitStructure>}
 };
 
 /* ---------------------  HINT!! ----------------------------------

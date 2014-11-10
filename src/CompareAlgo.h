@@ -44,7 +44,7 @@ class CompareAlgo{
         void initialize_comparators( const CodeMap& codes ) const; 
         void setComparator(std::unique_ptr<AbstractComparator>& ); 
         std::string filter(const std::string&) const;       
-        double compare(const std::string&, const std::string&) const;  
-        double filterAndCompare(const std::string&, const std::string&) const;  
+        double compare(const std::string&, const std::string&, std::string&) const;  
+        double filterAndCompare(const std::string&, const std::string&, std::string&) const;  
 
 };

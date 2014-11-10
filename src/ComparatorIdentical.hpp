@@ -27,7 +27,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class ComparatorIdentical : public AbstractComparator{
     public:
-        double operator()(const std::string& c1, const std::string& c2) const{
+        double operator()(const std::string& c1, const std::string& c2, std::string&) const{
             return (c1==c2)?1.:0.;
         } 
         

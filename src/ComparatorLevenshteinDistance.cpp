@@ -26,7 +26,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using namespace std;
 
 double ComparatorLevenshteinDistance::operator()
-            (const std::string& c1, const std::string& c2) const
+            (const std::string& c1, const std::string& c2, std::string&) const
 {
     uint dist = 0;
     if(c1.size() >= c2.size())

@@ -58,13 +58,14 @@ void ComparisonMatrix::compute_via_thread_(int tid) {
         std::string group1 = std::get<0>(pairs_[i]);
         std::string group2 = std::get<1>(pairs_[i]);
         //std::cout<< "comparing: "<<group1<<" and "<<group2<<std::endl;
-        std::string hint1, hint2;
+        std::string file1, file2, hint;
         double sim = compare_groups_(codeFiles_[group1], codeFiles_[group2],
-                                    &hint1, &hint2);
+                                    &file1, &file2, &hint);
         Similarity simil;
         simil.val = sim;
-        simil.hint1 = hint1;
-        simil.hint2 = hint2;                           
+        simil.file1 = file1;
+        simil.file2 = file2; 
+        simil.hint  =  hint;                         
         comparisonResult_[group1][group2] = simil;   
         if(tid==0 and verbose_){
             std::cout<<"\r "<<100*i/pairs_.size()<<"%  ";
@@ -152,7 +153,8 @@ void ComparisonMatrix::print_files() const{
 
 double ComparisonMatrix::compare_groups_(const std::vector<CodeFile>& g1,
                                     const std::vector<CodeFile>& g2, 
-                                    std::string* h1, std::string* h2) const
+                                    std::string* h1, std::string* h2,
+                                    std::string* hints) const
 {
     double match = -std::numeric_limits<double>::infinity();
     switch(comp_mode_){
@@ -160,40 +162,47 @@ double ComparisonMatrix::compare_groups_(const std::vector<CodeFile>& g1,
             //First implementation
             for(const CodeFile& f1: g1)
                 for(const CodeFile& f2: g2){
-                     double m = comparator_->compare(f1.filtered_content,
-                                                     f2.filtered_content);
+                     std::string hint;
+                     double m = comparator_->compare(f1.filtered_content,f2.filtered_content, hint);
                      if(m > match){
-                           match = m; *h1 = f1.filename; *h2 = f2.filename; 
+                           match = m; 
+                           *h1    = f1.filename; 
+                           *h2    = f2.filename; 
+                           *hints = hint;
                      }  
                 }
             break;
         case SameNameMultiply:
-            //First implementation
             match = 1.0;
             for(const CodeFile& f1: g1)
                 for(const CodeFile& f2: g2){
                     if(split(f1.filename,'/').back()!=
                        split(f2.filename,'/').back())
-                        continue;     
+                        continue;
+                     std::string hint;        
                      double m = comparator_->compare(f1.filtered_content,
-                                                     f2.filtered_content);
+                                                     f2.filtered_content, hint);
                      match *= m;
-                     //std::cout<<f1.filename<<" vs "<<f2.filename<<"   "<<m <<std::endl;    
+                     *h1 = f1.filename; 
+                     *h2 = f2.filename;
+                     *hints = hint; 
                 }
             break;
         case SameNameMax:
-            //First implementation
             for(const CodeFile& f1: g1)
                 for(const CodeFile& f2: g2){
                     if(split(f1.filename,'/').back()!=
                        split(f2.filename,'/').back())
-                        continue;     
-                     double m = comparator_->compare(f1.filtered_content,
-                                                     f2.filtered_content);
+                        continue;   
+                     std::string hint;     
+                     double m = comparator_->compare(f1.filtered_content,   
+                                                     f2.filtered_content, hint);
                      if(m > match){
-                           match = m; *h1 = f1.filename; *h2 = f2.filename; 
+                           match = m; 
+                           *h1 = f1.filename; 
+                           *h2 = f2.filename;
+                           *hints = hint; 
                      }
-                     //std::cout<<f1.filename<<" vs "<<f2.filename<<"   "<<m <<std::endl;    
                 }
             break;
         default: std::cout<<"WARNING: NO VALID MODE FOR COMPARISON"<<std::endl;
@@ -214,8 +223,9 @@ std::vector<CodeMatch> ComparisonMatrix::get_sorted_matches()
             match.similarity = comp.val;
             match.group1 = i.first;
             match.group2 = j.first;
-            match.file1  = comp.hint1;
-            match.file2  = comp.hint2;
+            match.file1  = comp.file1;
+            match.file2  = comp.file2;
+            match.hint   = comp.hint;
             matches.push_back(match);
         }
     }
@@ -252,8 +262,8 @@ void ComparisonMatrix::visual_diff(const std::string& s1, const std::string& s2)
     std::string syscall = difftool;
     Similarity sim = operator()(s1,s2);
 
-    syscall += " "+root_+sim.hint1;
-    syscall += " "+root_+sim.hint2;
+    syscall += " "+root_+sim.file1;
+    syscall += " "+root_+sim.file2;
 
     syscall+= " 2>&1 >/dev/null | grep 'something' &";
     //catch return value

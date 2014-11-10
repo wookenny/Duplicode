@@ -26,7 +26,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "difflib.h"
 
 double ComparatorUncommonStrings::operator()(const std::string& c1, 
-                                             const std::string& c2) const
+                                             const std::string& c2,
+                                             std::string& hint) const
 {
     //find strings used both groups
     std::set<std::string> s1 = strings_from_file_(c1);
@@ -40,7 +41,10 @@ double ComparatorUncommonStrings::operator()(const std::string& c1,
     std::set_intersection(intersect.begin(),intersect.end(),
                           uncommon_strings_.begin(),uncommon_strings_.end(),
                           std::inserter(uncommon,uncommon.begin()));
-    //return number of uncommon strings used in both code files                     
+    //return number of uncommon strings used in both code files   
+    hint = "";
+    for(const std::string &s: uncommon)
+        hint += ("["+s+"] ");                 
     return uncommon.size();
 } 
  
@@ -55,7 +59,7 @@ void ComparatorUncommonStrings::init( const CodeMap& codes){
         //for each contained file:
         for(const auto& code: kv.second){
             //add all used strings to set
-            for(const std::string& s: split(code.filtered_content,' ') ){
+            for(const std::string& s: split(code.filtered_content) ){
                 strings_used.insert(s);
             }
         }
@@ -82,7 +86,7 @@ void ComparatorUncommonStrings::init( const CodeMap& codes){
  
 std::set<std::string> ComparatorUncommonStrings::strings_from_file_(const std::string& c){
     std::set<std::string> strings_found;
-    for(auto s: split(c,' ')){
+    for(auto s: split(c)){
         strings_found.insert(s);
     }  
     return strings_found;

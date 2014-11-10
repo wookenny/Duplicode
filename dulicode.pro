@@ -20,6 +20,7 @@ HEADERS       = src/AbstractComparator.h \
                 src/FilterDeleteWhitespace.hpp \
                 src/FilterIdentity.hpp \
                 src/FilterToLower.hpp \
+                src/FilterSplitStructure.hpp \
                 src/CodeFile.hpp
 
 

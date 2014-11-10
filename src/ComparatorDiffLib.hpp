@@ -30,7 +30,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class ComparatorDiffLib : public AbstractComparator{
     public:
-        double operator()(const std::string& c1, const std::string& c2) const{           
+        double operator()(const std::string& c1, const std::string& c2,std::string&) const{           
             auto matcher = difflib::MakeSequenceMatcher(c1, c2);
             return matcher.ratio();
         } 

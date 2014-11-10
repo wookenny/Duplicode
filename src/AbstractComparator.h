@@ -33,7 +33,8 @@ typedef std::unordered_map<std::string,std::vector<CodeFile>> CodeMap;
 
 class AbstractComparator{
     public:
-        virtual double operator()(const std::string&, const std::string&) const = 0;
+        virtual double operator()(const std::string&, const std::string&,
+                                  std::string& hint) const = 0;
         virtual void init(const CodeMap& ) {/* not always needed */}
         
         virtual std::string name()        const =0;

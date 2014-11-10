@@ -106,8 +106,9 @@ class ComparisonMatrix{
         
         double compare_groups_(const std::vector<CodeFile>& g1,
                               const std::vector<CodeFile>& g2,
-                              std::string *hint1 = nullptr,
-                              std::string *hint2 = nullptr ) const;       
+                              std::string *file1 = nullptr,
+                              std::string *file2 = nullptr,
+                              std::string *hints = nullptr ) const;       
                               
         void compute_via_thread_(int tid);
         void write_results_(std::ostream &);

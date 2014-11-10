@@ -41,7 +41,7 @@ std::vector<boost::filesystem::path> get_all_files_by_name(
 std::vector<std::string> &split(const std::string &, char , 
                                 std::vector<std::string> &);
 std::vector<std::string> split(const std::string&, char);    
-
+std::vector<std::string> split(const std::string &s);
 
 
 bool is_source(const std::string &file);

@@ -22,25 +22,22 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
 #pragma once
-#include "AbstractComparator.h"
-#include <string>
-#include <cmath> 
+#include "AbstractFilter.h"
+#include <boost/regex.hpp>
 
-class ComparatorLongestMatch : public AbstractComparator{
- 
-public:
-        double operator()(const std::string& c1, const std::string& c2,
-                          std::string&) const;
-        
-        std::string name() const{
-            return "LongestMatch";
-        }
+class FilterSplitStructure : public AbstractFilter{
 
-        std::string description() const {
-            return "finds the longest common sequence in two files.";
-        }
-        
-private:
-       double sizeOfMatch(const std::string&, uint,
-                          const std::string&, uint) const;
-}; 
+     public:
+        std::string operator()(const std::string& s) const{
+            //replace all whiterspace (\\s) by he empty string
+            boost::regex expr("[.<>=\\[\\]\\{\\},:()#-;!\\+\\-!]");
+            std::string copy = boost::regex_replace(s, expr, " ");
+            return copy;
+        };
+
+        std::string name() const{ return "SplitStructure";}
+        std::string description() const{ return "splits the code at the "
+                                        "following strings:\n"
+                                        "\t\t'.', '<', '>', '=', '{', '}', '(', ')', "
+                                        "'#', ':', ',', '-', '+', '!'";}
+};

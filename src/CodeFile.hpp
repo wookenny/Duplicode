@@ -8,12 +8,14 @@ struct CodeMatch{
     double similarity;
     std::string file1;
     std::string file2;
+    std::string hint;
 };
 
 struct Similarity{
     double val;
-    std::string hint1;
-    std::string hint2;
+    std::string file1;
+    std::string file2;
+    std::string hint;
 };
 
 struct CodeFile{

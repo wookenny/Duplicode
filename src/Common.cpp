@@ -126,6 +126,14 @@ std::vector<std::string> split(const std::string &s, char delim) {
     return elems;
 }
 
+std::vector<std::string> split(const std::string &s){
+    std::istringstream iss(s);
+    std::vector<string> tokens;
+    copy(istream_iterator<string>(iss),
+         istream_iterator<string>(),
+         back_inserter(tokens));
+    return tokens;     
+}
 
 bool is_source(const std::string &file){
      magic_t myt = magic_open(MAGIC_CONTINUE|MAGIC_ERROR/*|MAGIC_DEBUG*/);

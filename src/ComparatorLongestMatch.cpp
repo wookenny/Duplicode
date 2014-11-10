@@ -24,13 +24,18 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "ComparatorLongestMatch.h"
 #include <iostream>
 double ComparatorLongestMatch::operator()(const std::string& c1,
-                                          const std::string& c2) const
+                                          const std::string& c2,
+                                          std::string& h) const
 {
     double max_match = 0;    
     for(uint i = 0; i < c1.size(); ++i )
         for(uint j = 0; j < c2.size();++j){
-            double match = sizeOfMatch(c1,i,c2,j);
-            max_match = std::max(match,max_match);       
+            double match = sizeOfMatch(c1,i,c2,j); 
+            if(match > max_match){
+                max_match = match;
+                h = c1.substr(i,match);
+            }
+                
         }
 
     return max_match;

@@ -75,6 +75,8 @@ int main(int ac, char* av[]){
     ("list,l", "ignore all other argumtents and give a list of available "
     "filters and comparators.")
     ("show,s", "use a visual difftool to show the best machtes.")
+    ("additional,a", "give additional hints about the comparison, if the" 
+                      " selected comparator provides such.")
     ("output,o", po::value<string>(&outfile),
                  "write the matches to the given file.")
     ("matrix,m", "display the resutls as a heatmap. A left click displays the folders"
@@ -157,14 +159,18 @@ int main(int ac, char* av[]){
     comp_matrix.verbose( not vm.count("no_process")> 0 );
     std::cout<<"\n";
     
-    //calculated similarites
+    //calculate & print similarites
     auto results = comp_matrix.get_sorted_matches();
     std::cout<<"\nresults:"<<std::endl;
     for(uint i = 0; i<15 and i<results.size();++i){
         CodeMatch &m = results[i];
         std::cout<< m.group1<<" vs. "<<m.group2<<":\t"<<m.similarity
                  <<"\t"<<split(m.file1,'/').back()
-                 <<" and "<<split(m.file2,'/').back() <<"\n";  
+                 <<" and "<<split(m.file2,'/').back() <<"\n";
+        if(vm.count("additional")>0 and m.hint.size()){
+            std::cout<< "Hint:\n"<< m.hint<<"\n"
+                        "-----------------------------------------\n";
+        }           
     }
     
     //print statistics

@@ -33,24 +33,21 @@ string CompareAlgo::filter(const string& code) const{
     return s;
 }
 
-double CompareAlgo::compare(const string& code1,const string& code2) const{
+double CompareAlgo::compare(const string& code1,const string& code2, string& hint) const{
     if(comparator_!=nullptr)
-        return (*comparator_)(code1,code2);
+        return (*comparator_)(code1,code2, hint);
     else
         std::cerr<<"Warning: No operator to compare code given!"<<std::endl;
     return 0;
 }
 
 double CompareAlgo::filterAndCompare(const std::string& c1,
-                                     const std::string& c2) const{
+                                     const std::string& c2, std::string& hint) const{
 
     string filtered1 = filter(c1);
     string filtered2 = filter(c2);
-    cout<<"Testing: \n'"<<c1<<"'\n'"<<c2<<"'\n";
-    cout<<"Filtered: \n'"<<filtered1<<"'\n'"<<filtered2<<"'\n";
-    cout << "Result: "<<compare(filtered1, filtered2) <<endl;
 
-    return compare(filtered1, filtered2);
+    return compare(filtered1, filtered2,hint);
 }
 
 void CompareAlgo::addFilter(unique_ptr<AbstractFilter>& filter_ptr) {
