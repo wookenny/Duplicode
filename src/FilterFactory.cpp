@@ -31,6 +31,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // important: implement  name() and description() method properly
 
 #include "FilterDeleteComments.h"
+#include "FilterDeleteHash.h"
 #include "FilterDeleteWhitespace.hpp"
 #include "FilterDelete.hpp"
 #include "FilterIdentity.hpp"
@@ -40,11 +41,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 std::map<std::string, AbstractFilter*(*)()> FilterFactory::map = 
 {
  {FilterDeleteComments().name(),   &createInstance<FilterDeleteComments>},
+ {FilterDeleteHash().name(),       &createInstance<FilterDeleteHash>},
  {FilterDeleteWhitespace().name(), &createInstance<FilterDeleteWhitespace>},
  {FilterDelete().name(),           &createInstance<FilterDelete>},
  {FilterIdentity().name(),         &createInstance<FilterIdentity>},
  {FilterToLower().name(),          &createInstance<FilterToLower>},
-  {FilterSplitStructure().name(),  &createInstance<FilterSplitStructure>}
+ {FilterSplitStructure().name(),   &createInstance<FilterSplitStructure>}
 };
 
 /* ---------------------  HINT!! ----------------------------------

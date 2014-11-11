@@ -10,6 +10,7 @@ HEADERS       = src/AbstractComparator.h \
                 src/ComparisonMatrix.h \
                 src/difflib.h \
                 src/FilterDeleteComments.h \
+                src/FilterDeleteHash.h \
                 src/FilterFactory.h \
                 src/magic.h \
                 src/ComparisionView.h \
@@ -32,6 +33,7 @@ SOURCES       = src/Common.cpp  \
                 src/CompareAlgo.cpp \
                 src/ComparisonMatrix.cpp \
                 src/FilterDeleteComments.cpp \
+                src/FilterDeleteHash.cpp \
                 src/FilterFactory.cpp \
                 src/Main.cpp \
                 src/ComparisionView.cpp \
